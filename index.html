@@ -66,6 +66,42 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-hexo-image" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/04/24/hexo-image/" class="article-date">
+  <time datetime="2022-04-24T15:50:42.000Z" itemprop="datePublished">2022-04-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/04/24/hexo-image/">hexo-image</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://likeshan168.github.io/2022/04/24/hexo-image/" data-id="cl2e28kqd0005bsm15dx20y2b" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hexo-github" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/04/23/hexo-github/" class="article-date">
@@ -97,14 +133,14 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init hexo_blog</span><br><span class="line">cd hexo_blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
 
 <p>创建完成之后，可以看到我们的目录结构如下：</p>
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423232811690.png"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423232811690.png" alt="image-20220423232811690"></p>
 <p>其中_config.yml是网站的配置文件，关于各个文件夹是用来做什么的，可以参考<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/setup">hexo</a>官方文档，其中有比较详细的介绍。接下，我们通过如下的命令运行该项目：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g //生成静态文件</span><br><span class="line">hexo s //启动服务</span><br></pre></td></tr></table></figure>
 
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423233207440.png" alt="image-20220423233207440"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423233207440.png" alt="image-20220423233207440"></p>
 <p>服务已经成功启动，由于，默认的4000端口已经被占用，我就通过  hexo s -p 5000 指定了端口，然后在浏览器中输入：<a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000</a> 可以看到运行的结果。</p>
 <h2 id="github-pages"><a href="#github-pages" class="headerlink" title="github pages"></a>github pages</h2><p>首先得要有GitHub的账号，然后创建一个项目</p>
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423233657056.png" alt="image-20220423233657056"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423233657056.png" alt="image-20220423233657056"></p>
 <p>创建完成之后，我们就可以通过<a target="_blank" rel="noopener" href="https://likeshan168.com.cn进行访问,现在由于没有内容,所以会提示404,接下来我们就将hexo_blog发布到github上/">https://likeshan168.com.cn进行访问，现在由于没有内容，所以会提示404，接下来我们就将hexo_blog发布到GitHub上</a></p>
 <h2 id="发布到GitHub"><a href="#发布到GitHub" class="headerlink" title="发布到GitHub"></a>发布到GitHub</h2><ul>
 <li><p>安装<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>：npm install hexo-deployer-git –save</p>
@@ -118,23 +154,23 @@
 <li><p>运行hexo clean &amp;&amp; hexo d</p>
 </li>
 <li><p>设置一下likeshan168.com.cn项目Pages中的开发分支（这里指定的分支名称就是_config.yml中deploy指定的分支名称）</p>
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423234906951.png" alt="image-20220423234906951"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423234906951.png" alt="image-20220423234906951"></p>
 </li>
 <li><p>访问<a target="_blank" rel="noopener" href="https://likeshan168.com.cn,看是否部署成功/">https://likeshan168.com.cn，看是否部署成功</a></p>
 </li>
 </ul>
-<p>如果在本地访问没有问题，部署到github pages查看样式都不对的话，修改_config.yml文件中的url=<a target="_blank" rel="noopener" href="https://likeshan168.com.cn/(%E6%94%B9%E6%88%90%E4%BD%A0%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80)">https://likeshan168.com.cn/(改成你自己项目的地址)</a></p>
+<p>如果在本地访问没有问题，部署到github pages查看样式都不对的话，修改_config.yml文件中的url&#x3D;<a target="_blank" rel="noopener" href="https://likeshan168.com.cn/(%E6%94%B9%E6%88%90%E4%BD%A0%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80)">https://likeshan168.com.cn/(改成你自己项目的地址)</a></p>
 <h2 id="创建新页面"><a href="#创建新页面" class="headerlink" title="创建新页面"></a>创建新页面</h2><p>创建一个about me的页面：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page --path about/me &quot;About me&quot;</span><br></pre></td></tr></table></figure>
 
-<p>执行完命令之后就能看到在source目录下创建了about目录，about目录下多了me.md文件：<br><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423235637325.png" alt="image-20220423235637325"></p>
+<p>执行完命令之后就能看到在source目录下创建了about目录，about目录下多了me.md文件：<br><img src="/2022/04/23/hexo-github/image-20220423235637325.png" alt="image-20220423235637325"></p>
 <p>添加菜单：</p>
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423235848764.png" alt="image-20220423235848764"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423235848764.png" alt="image-20220423235848764"></p>
 <p>重新生成一下静态文件</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
 
 <p>可以看到About的菜单生成了</p>
-<p><img src="C:\Users\hiand\AppData\Roaming\Typora\typora-user-images\image-20220423235939551.png" alt="image-20220423235939551"></p>
+<p><img src="/2022/04/23/hexo-github/image-20220423235939551.png" alt="image-20220423235939551"></p>
 <p>最后，将我们的修改推送到GitHub上即可</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 
@@ -143,7 +179,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2bznw7x00006gm1apv562h8" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2e28kqa0002bsm11ey39ay5" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -194,7 +230,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2bzjtf50001kwm1efd8c7nd" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2e28kq80001bsm19s7w9ibx" class="article-share-link">Share</a>
       
       
     </footer>
@@ -247,6 +283,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/04/24/hexo-image/">hexo-image</a>
+          </li>
         
           <li>
             <a href="/2022/04/23/hexo-github/">如何通过hexo+github pages搭建博客系统</a>
