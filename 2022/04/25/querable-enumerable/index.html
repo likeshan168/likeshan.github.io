@@ -7,17 +7,17 @@
   
   <title>C#中IEnumerable与IQueryable的区别 | Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="IEnumerable与IQueryable 都能显示延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
+  <meta name="description" content="IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C#中IEnumerable与IQueryable的区别">
 <meta property="og:url" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="IEnumerable与IQueryable 都能显示延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
+<meta property="og:description" content="IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/image-20220426131129413.png">
 <meta property="og:image" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/image-20220426132947167.png">
 <meta property="article:published_time" content="2022-04-25T15:32:51.000Z">
-<meta property="article:modified_time" content="2022-04-26T05:32:16.483Z">
+<meta property="article:modified_time" content="2022-04-26T05:49:47.436Z">
 <meta property="article:author" content="Sherman">
 <meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
@@ -94,7 +94,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>IEnumerable与IQueryable 都能显示延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
+        <p>IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
 <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">new</span> console -o queryable_enumerable</span><br></pre></td></tr></table></figure>
 
 <p>添加sqlite EF操作的类库的引用：</p>
@@ -103,7 +103,7 @@
 <p>还需要安装EF命令相关的类库</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.EntityFrameworkCore.Tools.DotNet</span><br></pre></td></tr></table></figure>
 
-<p>修改项目文件的如下：</p>
+<p>修改项目文件的内容如下：</p>
 <p><img src="/2022/04/25/querable-enumerable/image-20220426131129413.png" alt="image-20220426131129413"></p>
 <h2 id="添加数据操作类"><a href="#添加数据操作类" class="headerlink" title="添加数据操作类"></a>添加数据操作类</h2><p>创建DBContext类库：</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">MyContext</span> : <span class="title">DbContext</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ILoggerFactory MyLoggerFactory</span><br><span class="line">        = LoggerFactory.Create(builder =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="meta">#<span class="keyword">if</span> DEBUG</span></span><br><span class="line">            builder.AddConsole();</span><br><span class="line">        <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">public</span> DbSet&lt;User&gt; Users &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnConfiguring</span>(<span class="params">DbContextOptionsBuilder optionsBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//写完整地路径</span></span><br><span class="line">            <span class="built_in">string</span> connString = <span class="string">@&quot;Data Source=E:\xxx\xxx\xxx\xxx\queryable_enumerable\testdb.db&quot;</span>;</span><br><span class="line">            optionsBuilder.UseSqlite(connString).UseLoggerFactory(MyLoggerFactory);</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
@@ -120,12 +120,12 @@
 
 <p>运行程序之后，可以看到如下的输出：</p>
 <p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
-<p>从打印出的sql语句，我们可以知道，通过IEnumerable返回数据，是一次性将所有的数据装入内存当中，然后进行过滤操作，但是IQueryable在数据库层就做了过滤，所以性能方面是有提升的。</p>
+<p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2fpsqbb00067gm17vrr8ncx" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2fqb43m0006xcm11adihjbm" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
