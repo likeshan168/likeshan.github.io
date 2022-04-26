@@ -4,7 +4,7 @@ date: 2022-04-25 23:32:51
 tags: 技术杂谈
 ---
 
-IEnumerable与IQueryable 都能显示延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库
+IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库
 
 ## 创建项目
 
@@ -25,7 +25,7 @@ dotnet add pacakge Microsoft.EntityFrameworkCore.Tools
 dotnet add package Microsoft.EntityFrameworkCore.Tools.DotNet
 ```
 
-修改项目文件的如下：
+修改项目文件的内容如下：
 
 ![image-20220426131129413](querable-enumerable/image-20220426131129413.png)
 
@@ -107,4 +107,4 @@ myContext.Dispose();
 
 ![image-20220426132947167](querable-enumerable/image-20220426132947167.png)
 
-从打印出的sql语句，我们可以知道，通过IEnumerable返回数据，是一次性将所有的数据装入内存当中，然后进行过滤操作，但是IQueryable在数据库层就做了过滤，所以性能方面是有提升的。
+从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。
