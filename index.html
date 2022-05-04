@@ -66,6 +66,81 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-volatile" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/05/04/volatile/" class="article-date">
+  <time datetime="2022-05-04T14:24:56.000Z" itemprop="datePublished">2022-05-04</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/05/04/volatile/">C#中volatile关键字的作用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="volatile使用说明"><a href="#volatile使用说明" class="headerlink" title="volatile使用说明"></a>volatile使用说明</h2><p><code>volatile</code> 关键字指示一个字段可以由多个同时执行的线程修改。</p>
+<p>出于性能原因，编译器，运行时系统甚至硬件都可能重新排列对存储器位置的读取和写入。声明为 <code>volatile</code> 的字段将从某些类型的优化中排除。不确保从所有执行线程整体来看时所有易失性写入操作均按执行顺序排序。</p>
+<p><code>volatile</code> 关键字可应用于以下类型的字段：</p>
+<ul>
+<li>引用类型。</li>
+<li>指针类型（在不安全的上下文中）。 请注意，虽然指针本身可以是可变的，但是它指向的对象不能是可变的。 换句话说，不能声明“指向可变对象的指针”。</li>
+<li>简单类型，如 <code>sbyte</code>、<code>byte</code>、<code>short</code>、<code>ushort</code>、<code>int</code>、<code>uint</code>、<code>char</code>、<code>float</code> 和 <code>bool</code>。</li>
+<li>具有以下基本类型之一的 <code>enum</code> 类型：<code>byte</code>、<code>sbyte</code>、<code>short</code>、<code>ushort</code>、<code>int</code> 或 <code>uint</code>。</li>
+<li>已知为引用类型的泛型类型参数。</li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.intptr">IntPtr</a> 和 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.uintptr">UIntPtr</a>。</li>
+</ul>
+<p>其他类型（包括 <code>double</code> 和 <code>long</code>）无法标记为 <code>volatile</code>，因为对这些类型的字段的读取和写入不能保证是原子的。 若要保护对这些类型字段的多线程访问，请使用 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/api/system.threading.interlocked">Interlocked</a> 类成员或使用 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/statements/lock"><code>lock</code></a> 语句保护访问权限。</p>
+<p><code>volatile</code> 关键字只能应用于 <code>class</code> 或 <code>struct</code> 的字段。 不能将局部变量声明为 <code>volatile</code>。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Worker worker = <span class="keyword">new</span> Worker();</span><br><span class="line">Thread workerThread = <span class="keyword">new</span> Thread(worker.DoWork);</span><br><span class="line">workerThread.Start();</span><br><span class="line">Console.WriteLine(<span class="string">&quot;Main thread: starting worker thread...&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (!workerThread.IsAlive) ;</span><br><span class="line"></span><br><span class="line">Thread.Sleep(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">worker.RequestStop();</span><br><span class="line"></span><br><span class="line">workerThread.Join();</span><br><span class="line">Console.WriteLine(<span class="string">&quot;Main thread：worker thread has terminated.&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Worker</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">bool</span> _shouldStop;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">DoWork</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">bool</span> work = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">while</span> (!_shouldStop)</span><br><span class="line">        &#123;</span><br><span class="line">            work = !work;</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine(<span class="string">&quot;Work thread: terminating gracefully.&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RequestStop</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        _shouldStop = <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用Debug模式运行时，可以看到如下的运行结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Main thread: starting worker thread...</span><br><span class="line">Work thread: terminating gracefully.</span><br><span class="line">Main thread：worker thread has terminated.</span><br></pre></td></tr></table></figure>
+
+<p>切换到Release模式运行时，可以看到如下的运行结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Main thread: starting worker thread...</span><br></pre></td></tr></table></figure>
+
+<p>程序一直结束不了</p>
+<p>从运行结果上，我们可以看到编译器对字段 <code>_shouldStop</code>进行优化，Release模式下读取的都是缓存（副本）的值。</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><p>为了解决上述因为编译器优化而导致的运行结果不稳定的情况，可以通过volatile关键字解决</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">volatile</span> <span class="built_in">bool</span> _shouldStop;</span><br></pre></td></tr></table></figure>
+
+<p>只需要用<code>volatile</code>修饰字段<code>_shouldStop</code>即可，再次运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Main thread: starting worker thread...</span><br><span class="line">Work thread: terminating gracefully.</span><br><span class="line">Main thread：worker thread has terminated.</span><br></pre></td></tr></table></figure>
+
+<p>可以得到我们想要的结果</p>
+<h2 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h2><p>通过linqpad，查看代码生成的IL，左边的是加了<code>volatile</code>关键字修饰的，右边则没有</p>
+<p><img src="/2022/05/04/volatile/volatile_1.png" alt="volatile_1"></p>
+<p>从生成的IL可以看出，就是多了一个 <code>volatile.</code>指令，该指令的解释：指定当前位于计算堆栈顶部的地址可以是易失的，并且读取该位置的结果不能被缓存，或者对该地址的多个存储区不能被取消。我总结的一句就是，读取的总是最新的值。下面我们也可以通过观察汇编代码的差异得出相同的结论。</p>
+<p>通过linqpad，查看生成的汇编代码，左边的是加了<code>volatile</code>关键字修饰的，右边则没有</p>
+<p><img src="/2022/05/04/volatile/volatile_2.png" alt="volatile_2"></p>
+<p>通过差异发现，加了<code>volatile</code>关键字的，直接比较的是地址指向的内容，用的都是最新的值，而没有加关键字的则是：首先通过movzx指令，将地址指向的内容放入到了ecx寄存器中，后面一直比较的也是ecx寄存器中的值，没有拿到最新的值。这样导致的结果就是我们上面程序运行的结果，循环一直不能结束。</p>
+<p>结论：如果存在多线程访问上述类型的字段的话，保险的方式就是通过volatile关键字进行修饰，告诉编译器不需要对该字段进行优化，从而可以每次都能获取到最新的值</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl2rr27yk00067gm1b56n1d8g" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-querable-enumerable" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/04/25/querable-enumerable/" class="article-date">
@@ -119,7 +194,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2fqb43m0006xcm11adihjbm" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2rr27yj00057gm1fj878tu3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -196,7 +271,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2fqb43l0005xcm139i00dw9" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2rr27yh00037gm1g37ldrs3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -285,7 +360,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2fqb43g0002xcm1g79i5smv" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2rr27yg00027gm1bkv4ga1e" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -336,7 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2fqb43e0001xcm1holhf4ov" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2rr27ye00017gm1cj60gxfu" class="article-share-link">Share</a>
       
       
     </footer>
@@ -378,7 +453,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">May 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/04/">April 2022</a></li></ul>
     </div>
   </div>
 
@@ -389,6 +464,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/05/04/volatile/">C#中volatile关键字的作用</a>
+          </li>
         
           <li>
             <a href="/2022/04/25/querable-enumerable/">C#中IEnumerable与IQueryable的区别</a>
