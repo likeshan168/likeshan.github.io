@@ -66,6 +66,54 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-interlocked" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/05/05/interlocked/" class="article-date">
+  <time datetime="2022-05-05T15:09:44.000Z" itemprop="datePublished">2022-05-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/05/05/interlocked/">Interlocked中CompareExchange的用法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="CompareExchange使用说明"><a href="#CompareExchange使用说明" class="headerlink" title="CompareExchange使用说明"></a>CompareExchange使用说明</h2><p>方法签名：public static int CompareExchange(ref int location1, int value, int comparand);  location1与comparand进行比较，如果相等，则用value替换location1的值，并返回location1被替换之前的值，例如：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">int</span> b = Interlocked.CompareExchange(<span class="keyword">ref</span> a, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$&quot;a is <span class="subst">&#123;a&#125;</span>, b is <span class="subst">&#123;b&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：a is 1, b is 0</p>
+<p>此方法是原子操作，意味着比较和替换值的操作是线程安全的，那么这就可以使用在多线程当中。</p>
+<h2 id="CompareExchange示例"><a href="#CompareExchange示例" class="headerlink" title="CompareExchange示例"></a>CompareExchange示例</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//模拟多线程操作</span></span><br><span class="line"><span class="keyword">var</span> calculationHelper = <span class="keyword">new</span> CalculationHelper();</span><br><span class="line"><span class="built_in">int</span> ordinaryValue = <span class="number">0</span>;</span><br><span class="line">ManualResetEventSlim manualResetEvent = <span class="keyword">new</span> ManualResetEventSlim(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread1.Name = <span class="string">&quot;线程1&quot;</span>;</span><br><span class="line">thread1.Start();</span><br><span class="line"></span><br><span class="line">Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread2.Name = <span class="string">&quot;线程2&quot;</span>;</span><br><span class="line">thread2.Start();</span><br><span class="line"></span><br><span class="line">manualResetEvent.Set();<span class="comment">//多个等待的线程可以执行</span></span><br><span class="line"></span><br><span class="line">thread1.Join();</span><br><span class="line">thread2.Join();</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">$&quot;通过线程安全的方式计算结果：<span class="subst">&#123;calculationHelper.Total&#125;</span>，非线程安全计算出的结果为：<span class="subst">&#123;ordinaryValue&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    manualResetEvent.Wait();<span class="comment">//等待信号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ordinaryValue += i;</span><br><span class="line">        calculationHelper.AddTotal(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 计算帮助类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculationHelper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Total &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> total; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 累加</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;value&quot;&gt;</span>需要加的值<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">AddTotal</span>(<span class="params"><span class="built_in">int</span> <span class="keyword">value</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">value</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> localValue, compuetedValue;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            localValue = total;</span><br><span class="line">            compuetedValue = localValue + <span class="keyword">value</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (localValue != Interlocked.CompareExchange(<span class="keyword">ref</span> total, compuetedValue, localValue));<span class="comment">//说明计算成功了</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> compuetedValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以多次运行，观察结果，发现线程安全的方法返回的结果都是固定的，而非线程安全返回的值是变化的，如下是运行两次的结果</p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：97383348</code></p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：93608564</code></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://likeshan168.github.io/2022/05/05/interlocked/" data-id="cl2t5tb7p0003qsm168pa3vot" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-volatile" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/05/04/volatile/" class="article-date">
@@ -129,7 +177,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl2rr27yk00067gm1b56n1d8g" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl2t5tb7u0007qsm1a9078bsv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -194,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2rr27yj00057gm1fj878tu3" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2t5tb7u0006qsm1119edsgd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -271,7 +319,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2rr27yh00037gm1g37ldrs3" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2t5tb7m0002qsm1at0pa05a" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -360,7 +408,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2rr27yg00027gm1bkv4ga1e" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2t5tb7t0005qsm1c8nc2dtt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -411,7 +459,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2rr27ye00017gm1cj60gxfu" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/22/hello-world/" data-id="cl2t5tb7j0001qsm10umz83cy" class="article-share-link">Share</a>
       
       
     </footer>
@@ -466,6 +514,10 @@
       <ul>
         
           <li>
+            <a href="/2022/05/05/interlocked/">Interlocked中CompareExchange的用法</a>
+          </li>
+        
+          <li>
             <a href="/2022/05/04/volatile/">C#中volatile关键字的作用</a>
           </li>
         
@@ -479,10 +531,6 @@
         
           <li>
             <a href="/2022/04/23/hexo-github/">如何通过hexo+github pages搭建博客系统</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/22/hello-world/">Hello World</a>
           </li>
         
       </ul>
