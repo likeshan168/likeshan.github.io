@@ -66,6 +66,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ssh-nopassword" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2022/05/07/ssh-nopassword/" class="article-date">
+  <time datetime="2022-05-07T15:05:10.000Z" itemprop="datePublished">2022-05-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2022/05/07/ssh-nopassword/">ssh配置免密登录</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
+<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
+<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
+<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
+</li>
+<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
+<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
+</li>
+<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
+</li>
+<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
+<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
+<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
+</li>
+<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://likeshan168.github.io/2022/05/07/ssh-nopassword/" data-id="cl2w1lyw500099gm1fwmi4lky" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-maven-demo" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2022/05/06/maven-demo/" class="article-date">
@@ -124,7 +179,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/06/maven-demo/" data-id="cl2vzxi3u0005ugm194iahrv9" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/06/maven-demo/" data-id="cl2w1lyw400059gm1ezlzao27" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -172,7 +227,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/05/interlocked/" data-id="cl2vzxi3o0002ugm18jz85o80" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/05/interlocked/" data-id="cl2w1lyw300049gm15lt34hqz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -247,7 +302,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl2vzxi43000dugm18jmz9kzy" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl2w1lyw7000b9gm1hj3xf81c" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -312,7 +367,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2vzxi43000cugm115nvcepp" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl2w1lyw500069gm1337i1dj6" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -389,7 +444,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2vzxi3r0004ugm1asue45zl" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl2w1lyw100029gm17ofc5c6s" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -478,7 +533,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2vzxi3n0001ugm191uc6xqu" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl2w1lyvz00019gm15vxt65lx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -535,6 +590,10 @@
       <ul>
         
           <li>
+            <a href="/2022/05/07/ssh-nopassword/">ssh配置免密登录</a>
+          </li>
+        
+          <li>
             <a href="/2022/05/06/maven-demo/">通过maven命令创建项目</a>
           </li>
         
@@ -548,10 +607,6 @@
         
           <li>
             <a href="/2022/04/25/querable-enumerable/">C#中IEnumerable与IQueryable的区别</a>
-          </li>
-        
-          <li>
-            <a href="/2022/04/25/hexo-image/">hexo+typora+github图片路径问题</a>
           </li>
         
       </ul>

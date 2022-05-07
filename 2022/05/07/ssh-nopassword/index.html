@@ -5,17 +5,22 @@
   
 
   
-  <title>About me | Blog</title>
+  <title>ssh配置免密登录 | Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="About me">
-<meta property="og:url" content="https://likeshan168.github.io/about/me.html">
+  <meta name="description" content="免密流程假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）  操作流程 在A服务器上生成密钥：ssh-keygen -t rsa，都采用默认的配置，直接回车即可  默认生成的密钥是保存在&#x2F;home&#x2F;sherm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ssh配置免密登录">
+<meta property="og:url" content="https://likeshan168.github.io/2022/05/07/ssh-nopassword/index.html">
 <meta property="og:site_name" content="Blog">
+<meta property="og:description" content="免密流程假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）  操作流程 在A服务器上生成密钥：ssh-keygen -t rsa，都采用默认的配置，直接回车即可  默认生成的密钥是保存在&#x2F;home&#x2F;sherm">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-04-23T14:22:47.000Z">
-<meta property="article:modified_time" content="2022-04-23T14:22:47.585Z">
+<meta property="og:image" content="https://likeshan168.github.io/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png">
+<meta property="article:published_time" content="2022-05-07T15:05:10.000Z">
+<meta property="article:modified_time" content="2022-05-07T15:48:43.764Z">
 <meta property="article:author" content="Sherman">
+<meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://likeshan168.github.io/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png">
   
     <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
   
@@ -66,10 +71,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="page-" class="article article-type-page" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-ssh-nopassword" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/about/me.html" class="article-date">
-  <time datetime="2022-04-23T14:22:47.000Z" itemprop="datePublished">2022-04-23</time>
+    <a href="/2022/05/07/ssh-nopassword/" class="article-date">
+  <time datetime="2022-05-07T15:05:10.000Z" itemprop="datePublished">2022-05-07</time>
 </a>
     
   </div>
@@ -80,7 +85,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      About me
+      ssh配置免密登录
     </h1>
   
 
@@ -88,17 +93,46 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
+<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
+<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
+<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
+</li>
+<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
+<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
+</li>
+<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
+</li>
+<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
+<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
+<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
+</li>
+<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
+</li>
+</ol>
+
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/about/me.html" data-id="cl2w1lyvx00009gm1g5tw9d58" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/07/ssh-nopassword/" data-id="cl2w1lyw500099gm1fwmi4lky" class="article-share-link">Share</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
+
     </footer>
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/2022/05/06/maven-demo/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">通过maven命令创建项目</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
