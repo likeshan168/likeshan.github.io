@@ -108,4 +108,5 @@ theme: landscape
 deploy:
   type: 'git'
   repository: https://github.com/likeshan168/likeshan.github.io.git
+  # repository: sherman@172.22.128.179:/home/sherman/data/git/hexoBlog
   branch: master
