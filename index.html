@@ -88,7 +88,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：<code>ContractResolver = new CamelCasePropertyNamesContractResolver()</code>，但是还是行不通。如果我们有实现定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串然后动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。</p>
+        <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：<code>ContractResolver = new CamelCasePropertyNamesContractResolver()</code>，但是还是行不通。如果我们有事先定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。</p>
 <h2 id="动态生成实体类"><a href="#动态生成实体类" class="headerlink" title="动态生成实体类"></a>动态生成实体类</h2><ul>
 <li><p>创建一个控制台项目：<code>dotnet new console -o JsonToObject</code></p>
 </li>
@@ -104,7 +104,7 @@
 <p>通过反射获取静态方法的扩展</p>
 <figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Extension</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MethodInfo <span class="title">GetGenericMethod</span>(<span class="params"><span class="keyword">this</span> Type targetType, <span class="built_in">string</span> name, BindingFlags flags, <span class="keyword">params</span> Type[] parameterTypes</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> methods = targetType.GetMethods(flags).Where(m =&gt; m.Name == name &amp;&amp; m.IsGenericMethod);</span><br><span class="line">        <span class="keyword">var</span> flag = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">foreach</span> (MethodInfo method <span class="keyword">in</span> methods)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameters = method.GetParameters();</span><br><span class="line">            <span class="keyword">if</span> (parameters.Length != parameterTypes.Length)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; parameters.Length; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (parameters[i].ParameterType != parameterTypes[i])</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i == parameters.Length - <span class="number">1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (flag)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> method;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>至此，我们已经显示了，文章开头说的将json字符串的首字母都变成小写的。</p>
+<p>至此，我们已经实现了文章开头说的将json字符串的首字母都变成小写</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要涉及以下的内容</p>
 <ul>
 <li><p>如何通过json字符串拼接类的定义</p>
@@ -112,7 +112,7 @@
 <li><p>如何通过动态编译的方式动态生成类</p>
 </li>
 <li><p>反射动态调用反序列化的方法</p>
-<p>希望本文能够对大家有所帮助，完整地项目地址可以参考：<a target="_blank" rel="noopener" href="https://github.com/likeshan168/test_demo/tree/main/dynamic_demo">dynamic_demo</a>项目</p>
+<p>希望本文能够对大家有所帮助，完整的项目地址可以参考：<a target="_blank" rel="noopener" href="https://github.com/likeshan168/test_demo/tree/main/dynamic_demo">dynamic_demo</a>项目</p>
 </li>
 </ul>
 </li>
@@ -123,7 +123,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/11/json-to-object/" data-id="cl317hxoj00055om1dn0x3b1e" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/11/json-to-object/" data-id="cl317puve0005d0m1hpxwavzv" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -178,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/07/ssh-nopassword/" data-id="cl317hxoo000g5om13ktad9w0" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/07/ssh-nopassword/" data-id="cl317puvv000gd0m10qwh6f58" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -248,7 +248,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/06/maven-demo/" data-id="cl317hxoj00065om1dfz314cy" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/06/maven-demo/" data-id="cl317puvi0006d0m1dds2gmry" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -296,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/05/interlocked/" data-id="cl317hxoi00045om1azk84x4r" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/05/interlocked/" data-id="cl317puva0004d0m1dwnwenoa" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -371,7 +371,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl317hxop000h5om13snm79s4" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/05/04/volatile/" data-id="cl317puvx000hd0m14aleaxb4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -436,7 +436,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl317hxol00095om1haf4ardw" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/querable-enumerable/" data-id="cl317puvk0009d0m17ygr9mas" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -513,7 +513,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl317hxof00025om15hq8ce3k" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/25/hexo-image/" data-id="cl317puv50001d0m13cou3s29" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
@@ -602,7 +602,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl317hxod00015om1g90j9n7w" class="article-share-link">Share</a>
+      <a data-url="https://likeshan168.github.io/2022/04/23/hexo-github/" data-id="cl317puv70002d0m18jki5kim" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag">技术杂谈</a></li></ul>
