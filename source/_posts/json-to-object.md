@@ -6,7 +6,7 @@ tags: 技术杂谈
 
 ## 应用场景
 
-最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：`ContractResolver = new CamelCasePropertyNamesContractResolver()`，但是还是行不通。如果我们有实现定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串然后动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。
+最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：`ContractResolver = new CamelCasePropertyNamesContractResolver()`，但是还是行不通。如果我们有事先定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。
 
 ## 动态生成实体类
 
@@ -252,7 +252,7 @@ tags: 技术杂谈
     }
     ```
 
-    至此，我们已经显示了，文章开头说的将json字符串的首字母都变成小写的。
+    至此，我们已经实现了文章开头说的将json字符串的首字母都变成小写
 
     ## 总结
 
@@ -264,5 +264,5 @@ tags: 技术杂谈
 
     - 反射动态调用反序列化的方法
 
-      希望本文能够对大家有所帮助，完整地项目地址可以参考：[dynamic_demo](https://github.com/likeshan168/test_demo/tree/main/dynamic_demo)项目
+      希望本文能够对大家有所帮助，完整的项目地址可以参考：[dynamic_demo](https://github.com/likeshan168/test_demo/tree/main/dynamic_demo)项目
 
