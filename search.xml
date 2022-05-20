@@ -1,47 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>hexo+typora+github图片路径问题</title>
-    <url>/2022/04/25/hexo-image/</url>
-    <content><![CDATA[<p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
-<h2 id="资源文件夹"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹</h2><p>直接引用官网的解释：</p>
-<p>资源（Asset）代表 <code>source</code> 文件夹中除了文章以外的所有文件，例如图片、CSS、JS 文件等。比方说，如果你的Hexo项目中只有少量图片，那最简单的方法就是将它们放在 <code>source/images</code> 文件夹中。然后通过类似于 <code>![](/images/image.jpg)</code> 的方法访问它们。</p>
-<p>对于那些想要更有规律地提供图片和其他资源以及想要将他们的资源分布在各个文章上的人来说，Hexo也提供了更组织化的方式来管理资源。这个稍微有些复杂但是管理资源非常方便的功能可以通过将 <code>config.yml</code> 文件中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+    <title>Java中获取执行时间的几种方式</title>
+    <url>/2022/05/16/calculate-time/</url>
+    <content><![CDATA[<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>有的时候，我们需要查看某一段代码的性能如何，最为简单的方式，可以通过计算该段代码执行的耗时，来进行简单的判断，那么我们在java中可以通过以下几种方式获取程序的执行耗时。</p>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><ol>
+<li><p>通过 <code>System.currentTimeMillis()</code>方法可以获取当前时间的毫秒数据，那么就可以在开始执行的地方记录一个当前时间的毫秒数值，程序执行结束的时候获取一个当前时间的毫秒数值，取两个时间的差值即为程序的耗时，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 通过 &lt;code&gt;System.currentTimeMillis()&lt;/code&gt;获取执行的时长</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByCurrentTimeMillis</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total Time：%d ms&quot;</span>, end - start));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>System.nanoTime()</code>方法，该方法和<code>System.currentTimeMillis()</code>类似，只是返回的是纳秒。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过&lt;code&gt;System.nanoTime()&lt;/code&gt;获取执行时长，该方法返回的单位是纳秒</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByNanoTime</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total Time：%d ms&quot;</span>, (end - start) / <span class="number">1000000</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>java.util.Date</code>初始化一个时间类型的对象，在程序的开始地方用于表示开始时间，程序结束时再初始化一个时间对象，然后计算两个时间的差值，也就是执行的时长。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过java.util.Date初始化开始和结束时间，计算两个时间的差值得出执行时间</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByDate</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">Date</span> <span class="variable">startDate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">Date</span> <span class="variable">endDate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, endDate.getTime() - startDate.getTime()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>commons.lang3</code>中的<code>StopWatch</code>，需要引入如下的依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.commons<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-lang3<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.12.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流</p>
-<h2 id="相对路径引用的标签插件"><a href="#相对路径引用的标签插件" class="headerlink" title="相对路径引用的标签插件"></a>相对路径引用的标签插件</h2><p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的<a href="https://hexo.io/docs/tag-plugins#Include-Assets">标签插件</a>被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过引入apache 的 commons.lang3包，使用StopWatch获取执行时间</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch1</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">StopWatch</span> <span class="variable">stopWatch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StopWatch</span>();</span><br><span class="line">    stopWatch.start();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopWatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopWatch.getTime()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>com.google.guava</code>中<code>Stopwatch</code>，需要引入如下的依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>31.1-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- &lt;type&gt;bundle&lt;/type&gt; --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<p>比如说：当你打开文章资源文件夹功能后，你把一个 <code>example.jpg</code> 图片放在了你的资源文件夹中，如果通过使用相对路径的常规 markdown 语法 <code>![](example.jpg)</code> ，它将 <em>不会</em> 出现在首页上。（但是它会在文章中按你期待的方式工作）</p>
-<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过这种方式，图片将会同时出现在文章和主页以及归档页中。</p>
-<p>这种方式，在本地开发中不是太友好</p>
-<h2 id="在markdown文件中嵌入图片"><a href="#在markdown文件中嵌入图片" class="headerlink" title="在markdown文件中嵌入图片"></a>在markdown文件中嵌入图片</h2><p>首先引用 <a href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a> 包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
-
-<p>然后修改_config.yml文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
-
-<p>开启了之后，图片资源就会自动解析成对应的图片路径。比如：“test.jpg” 位于 “&#x2F;2022&#x2F;04&#x2F;25&#x2F;test&#x2F;test.jpg”,</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![](test.jpg)` 将会转换成 `&lt;img src=&quot;/2022/04/25/test/test.jpg&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这种方式，虽然能解决发布之后图片展示的问题，但是不能解决本地typora编辑的问题，例如：有如下的目录结构：</p>
-<p><img src="/../images/image-20220425100849334.png" alt="image-20220425100849334"></p>
-<p>编辑hexo-github.md文件，如果写成：<img src="/2022/04/25/hexo-image/image-20220425100939907.png" alt="image-20220425100939907"></p>
-<p>这种相对路径之后，能在typora中显示图片，但是在网页上就不能展示图片，如果改成下面这种：</p>
-<p><img src="/2022/04/25/hexo-image/image-20220425101023160.png" alt="image-20220425101023160"></p>
-<p>能在网页上显示图片，但是在typora中又不能显示，这个时候，我们就通过修改插件 hexo-renderer-marked 的代码，来兼容两方的需求，找到图片路径转换的代码：</p>
-<p><img src="/2022/04/25/hexo-image/image-20220425101222552.png" alt="image-20220425101222552"></p>
-<p>其中红框中的代码就是新加的，这样我们在md文件中，路径写成：hexo-github&#x2F;image-20220423232811690.png 这样，就能同时在typora和网页上进行展示，</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-
-<p>查看没有问题</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 引入com.google.guava中的Guava包，使用Stopwatch获取执行时间</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch2</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">Stopwatch</span> <span class="variable">stopwatch</span> <span class="operator">=</span> Stopwatch.createStarted();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopwatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopwatch.elapsed(TimeUnit.MILLISECONDS)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过spring中的<code>StopWatch</code>获取执行时间，我这里是使用的spring boot搭建的控制台程序</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过spring中的StopWatch获取执行时间</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch3</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">    org.springframework.util.<span class="type">StopWatch</span> <span class="variable">stopWatch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">org</span>.springframework.util.StopWatch();</span><br><span class="line">    stopWatch.start();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopWatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopWatch.getTotalTimeMillis()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>通过以上6种方式都可以获取到程序的执行耗时，不知道大家是否还有其他的方式呢？欢迎在评论区讨论。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -107,6 +93,143 @@
       </tags>
   </entry>
   <entry>
+    <title>hexo+typora+github图片路径问题</title>
+    <url>/2022/04/25/hexo-image/</url>
+    <content><![CDATA[<p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
+<h2 id="资源文件夹"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹</h2><p>直接引用官网的解释：</p>
+<p>资源（Asset）代表 <code>source</code> 文件夹中除了文章以外的所有文件，例如图片、CSS、JS 文件等。比方说，如果你的Hexo项目中只有少量图片，那最简单的方法就是将它们放在 <code>source/images</code> 文件夹中。然后通过类似于 <code>![](/images/image.jpg)</code> 的方法访问它们。</p>
+<p>对于那些想要更有规律地提供图片和其他资源以及想要将他们的资源分布在各个文章上的人来说，Hexo也提供了更组织化的方式来管理资源。这个稍微有些复杂但是管理资源非常方便的功能可以通过将 <code>config.yml</code> 文件中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+
+<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流</p>
+<h2 id="相对路径引用的标签插件"><a href="#相对路径引用的标签插件" class="headerlink" title="相对路径引用的标签插件"></a>相对路径引用的标签插件</h2><p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的<a href="https://hexo.io/docs/tag-plugins#Include-Assets">标签插件</a>被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如说：当你打开文章资源文件夹功能后，你把一个 <code>example.jpg</code> 图片放在了你的资源文件夹中，如果通过使用相对路径的常规 markdown 语法 <code>![](example.jpg)</code> ，它将 <em>不会</em> 出现在首页上。（但是它会在文章中按你期待的方式工作）</p>
+<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式，图片将会同时出现在文章和主页以及归档页中。</p>
+<p>这种方式，在本地开发中不是太友好</p>
+<h2 id="在markdown文件中嵌入图片"><a href="#在markdown文件中嵌入图片" class="headerlink" title="在markdown文件中嵌入图片"></a>在markdown文件中嵌入图片</h2><p>首先引用 <a href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a> 包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
+
+<p>然后修改_config.yml文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
+
+<p>开启了之后，图片资源就会自动解析成对应的图片路径。比如：“test.jpg” 位于 “&#x2F;2022&#x2F;04&#x2F;25&#x2F;test&#x2F;test.jpg”,</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![](test.jpg)` 将会转换成 `&lt;img src=&quot;/2022/04/25/test/test.jpg&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式，虽然能解决发布之后图片展示的问题，但是不能解决本地typora编辑的问题，例如：有如下的目录结构：</p>
+<p><img src="/../images/image-20220425100849334.png" alt="image-20220425100849334"></p>
+<p>编辑hexo-github.md文件，如果写成：<img src="/2022/04/25/hexo-image/image-20220425100939907.png" alt="image-20220425100939907"></p>
+<p>这种相对路径之后，能在typora中显示图片，但是在网页上就不能展示图片，如果改成下面这种：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101023160.png" alt="image-20220425101023160"></p>
+<p>能在网页上显示图片，但是在typora中又不能显示，这个时候，我们就通过修改插件 hexo-renderer-marked 的代码，来兼容两方的需求，找到图片路径转换的代码：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101222552.png" alt="image-20220425101222552"></p>
+<p>其中红框中的代码就是新加的，这样我们在md文件中，路径写成：hexo-github&#x2F;image-20220423232811690.png 这样，就能同时在typora和网页上进行展示，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>查看没有问题</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java中的扩展方法</title>
+    <url>/2022/05/20/java-extension/</url>
+    <content><![CDATA[<h2 id="扩展方法"><a href="#扩展方法" class="headerlink" title="扩展方法"></a>扩展方法</h2><p>如果想要对现有的类添加新的方法，但是又不太可能去修改原有类的时候，我们就可以通过扩展方法进行扩展（当然，也有其他的方式可以达到目的），java原生是不支持扩展方法的，熟悉其他语言的同学可能知道，例如：C#、go、kotlin等都是原生支持扩展方法的，那如果想在java中也要实现扩展方法，比如：“hello world”.print();实现 这样的功能，该如何做呢？</p>
+<h2 id="Manifold介绍"><a href="#Manifold介绍" class="headerlink" title="Manifold介绍"></a>Manifold介绍</h2><p>Manifold是一个java的编译插件，其中包含了很多的功能，其中扩展方法就是其中之一，更多的功能介绍可以参考<a href="http://manifold.systems/">官网</a>以及<a href="https://github.com/manifold-systems/manifold">源代码</a></p>
+<p>接下来我们简单地通过代码的方式看看manifold是如何实现扩展方法的。</p>
+<ul>
+<li>首先，添加依赖，参考pom.xml文件如下</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>my-ext-app<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>My Java Extension App<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- set latest manifold version here --&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">manifold.version</span>&gt;</span>2022.1.14<span class="tag">&lt;/<span class="name">manifold.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>systems.manifold<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>manifold-ext-rt<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;manifold.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span>                                                                                                     </span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--Add the -Xplugin:Manifold argument for the javac compiler--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>11<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>11<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">encoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">encoding</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">compilerArgs</span>&gt;</span></span><br><span class="line">                        <span class="comment">&lt;!-- Configure manifold plugin--&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">arg</span>&gt;</span>-Xplugin:Manifold<span class="tag">&lt;/<span class="name">arg</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">compilerArgs</span>&gt;</span></span><br><span class="line">                    <span class="comment">&lt;!-- Add the processor path for the plugin --&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>systems.manifold<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>manifold-ext<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;manifold.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>定义一个类，例如：StringExtension</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> extensions.java.lang.String;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Extension;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.This;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Extension</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringExtension</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(<span class="meta">@This</span> String thiz)</span> &#123;</span><br><span class="line">        System.out.println(thiz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Extension</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">lineSeparator</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> System.lineSeparator();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Extension</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello &quot;</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特别说明下：扩展的包的定义是有一定的限制，所有的扩展类必须是在<code>extensions</code>包下面定义，后面加上要扩展的类的包，例如上代码：<code>extensions.java.lang.String</code>,在java9以及后续的版本中，我们还可以加上自己的模块名称，比如：com.test，那么扩展的包名就可以是：<code>com.test.extensions.java.lang.String</code>,在java8中<code>extensions</code>必须是根。</p>
+<p>扩展方法所在的类必须添加@Extension注解，扩展方法必须是静态的公共方法，而且第一个参数为：@This+扩展的类型+参数名称，如果是静态的扩展方法那么需要在静态方法上面加@Extension注解，参数不再需要@This 进行限定，定义完成之后我们可以通过如下的方式进行调用了</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="string">&quot;hello world&quot;</span>.print();</span><br><span class="line">System.out.println(String.sayHello(<span class="string">&quot;sherman&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>当然，为了更棒的体验，还是要在idea中装一个插件Manifold</p>
+<p><img src="/2022/05/20/java-extension/image-20220520121202724.png" alt="image-20220520121202724"></p>
+<h2 id="其他类型扩展"><a href="#其他类型扩展" class="headerlink" title="其他类型扩展"></a>其他类型扩展</h2><p>比如，我想针对Iterable<T>这个类型进行扩展，可以参考如下的代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> extensions.java.lang.Iterable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Extension;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Self;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.This;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.NoSuchElementException;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Extension</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CollectionExtension</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T <span class="title function_">first</span><span class="params">(<span class="meta">@This</span> Iterable&lt;T&gt; thiz, Predicate&lt;T&gt; predicate)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (T element : thiz) &#123;</span><br><span class="line">            <span class="keyword">if</span> (predicate.test(element)) &#123;</span><br><span class="line">                <span class="keyword">return</span> element;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;one&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;two&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;three&quot;</span>);</span><br><span class="line">Predicate&lt;String&gt; getFirst = s -&gt; Objects.equals(s, <span class="string">&quot;one&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">first</span> <span class="operator">=</span> list.first(getFirst);</span><br><span class="line">System.out.println(first);</span><br></pre></td></tr></table></figure>
+
+<p>Manifold已经为我们提供了一些扩展</p>
+<ul>
+<li><p><strong>Collections</strong></p>
+<p>定义在manifold-io模块中，扩展了以下的类</p>
+<ul>
+<li>java.io.BufferedReader</li>
+<li>java.io.File</li>
+<li>java.io.InputStream</li>
+<li>java.io.OutputStream</li>
+<li>java.io.Reader</li>
+<li>java.io.Writer</li>
+</ul>
+</li>
+<li><p><strong>Text</strong></p>
+<p>定义在manifold-text模块中，扩展了以下的类</p>
+<ul>
+<li>java.lang.CharSequence</li>
+<li>java.lang.String</li>
+</ul>
+</li>
+<li><p><strong>I&#x2F;O</strong></p>
+<p>定义在manifold-io模块中，扩展了以下的类</p>
+<ul>
+<li>java.io.BufferedReader</li>
+<li>java.io.File</li>
+<li>java.io.InputStream</li>
+<li>java.io.OutputStream</li>
+<li>java.io.Reader</li>
+<li>java.io.Writer</li>
+</ul>
+</li>
+<li><p><strong>Web&#x2F;JSON</strong></p>
+<p>定义在manifold-json模块中，扩展了以下的类</p>
+<ul>
+<li>java.net.URL</li>
+<li>manifold.rt.api.Bindings</li>
+</ul>
+</li>
+</ul>
+<p>我们也可以将自己的扩展以包的形式提供出去，具体注意事项可以参考官方的文档。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Interlocked中CompareExchange的用法</title>
+    <url>/2022/05/05/interlocked/</url>
+    <content><![CDATA[<h2 id="CompareExchange使用说明"><a href="#CompareExchange使用说明" class="headerlink" title="CompareExchange使用说明"></a>CompareExchange使用说明</h2><p>方法签名：public static int CompareExchange(ref int location1, int value, int comparand);  location1与comparand进行比较，如果相等，则用value替换location1的值，并返回location1被替换之前的值，例如：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">int</span> b = Interlocked.CompareExchange(<span class="keyword">ref</span> a, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$&quot;a is <span class="subst">&#123;a&#125;</span>, b is <span class="subst">&#123;b&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：a is 1, b is 0</p>
+<p>此方法是原子操作，意味着比较和替换值的操作是线程安全的，那么这就可以使用在多线程当中。</p>
+<h2 id="CompareExchange示例"><a href="#CompareExchange示例" class="headerlink" title="CompareExchange示例"></a>CompareExchange示例</h2><figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟多线程操作</span></span><br><span class="line"><span class="keyword">var</span> calculationHelper = <span class="keyword">new</span> CalculationHelper();</span><br><span class="line"><span class="built_in">int</span> ordinaryValue = <span class="number">0</span>;</span><br><span class="line">ManualResetEventSlim manualResetEvent = <span class="keyword">new</span> ManualResetEventSlim(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread1.Name = <span class="string">&quot;线程1&quot;</span>;</span><br><span class="line">thread1.Start();</span><br><span class="line"></span><br><span class="line">Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread2.Name = <span class="string">&quot;线程2&quot;</span>;</span><br><span class="line">thread2.Start();</span><br><span class="line"></span><br><span class="line">manualResetEvent.Set();<span class="comment">//多个等待的线程可以执行</span></span><br><span class="line"></span><br><span class="line">thread1.Join();</span><br><span class="line">thread2.Join();</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">$&quot;通过线程安全的方式计算结果：<span class="subst">&#123;calculationHelper.Total&#125;</span>，非线程安全计算出的结果为：<span class="subst">&#123;ordinaryValue&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    manualResetEvent.Wait();<span class="comment">//等待信号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ordinaryValue += i;</span><br><span class="line">        calculationHelper.AddTotal(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 计算帮助类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculationHelper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Total &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> total; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 累加</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;value&quot;&gt;</span>需要加的值<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">AddTotal</span>(<span class="params"><span class="built_in">int</span> <span class="keyword">value</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">value</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> localValue, compuetedValue;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            localValue = total;</span><br><span class="line">            compuetedValue = localValue + <span class="keyword">value</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (localValue != Interlocked.CompareExchange(<span class="keyword">ref</span> total, compuetedValue, localValue));<span class="comment">//说明计算成功了</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> compuetedValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以多次运行，观察结果，发现线程安全的方法返回的结果都是固定的，而非线程安全返回的值是变化的，如下是运行两次的结果</p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：97383348</code></p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：93608564</code></p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java中String、StringBuffer、StringBuilder之前的区别</title>
     <url>/2022/05/13/java-string-stringbuilder/</url>
     <content><![CDATA[<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>String、StringBuffer、StringBuilder都可以应用于字符串的处理，但是在内部实现上还是有区别的。</p>
@@ -126,57 +249,6 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sherman.service.StringTestService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.CommandLineRunner;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Hello world!</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">App</span> <span class="keyword">implements</span> <span class="title class_">CommandLineRunner</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> StringTestService stringTestService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        SpringApplication.run(App.class, args);</span><br><span class="line">        System.out.println( <span class="string">&quot;Hello World!&quot;</span> );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;程序的真正入口地址&quot;</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">loop</span> <span class="operator">=</span> <span class="number">1000000</span>;</span><br><span class="line">        stringTestService.testString(loop);</span><br><span class="line">        stringTestService.testStringBuffer(loop);</span><br><span class="line">        stringTestService.testStringBuilder(loop);</span><br><span class="line">        stringTestService.testStringBufferBySpecifiedCapacity(loop);</span><br><span class="line">        stringTestService.testStringBuilderBySpecifiedCapacity(loop);&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>程序的执行结果如下：</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java中获取执行时间的几种方式</title>
-    <url>/2022/05/16/calculate-time/</url>
-    <content><![CDATA[<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>有的时候，我们需要查看某一段代码的性能如何，最为简单的方式，可以通过计算该段代码执行的耗时，来进行简单的判断，那么我们在java中可以通过以下几种方式获取程序的执行耗时。</p>
-<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><ol>
-<li><p>通过 <code>System.currentTimeMillis()</code>方法可以获取当前时间的毫秒数据，那么就可以在开始执行的地方记录一个当前时间的毫秒数值，程序执行结束的时候获取一个当前时间的毫秒数值，取两个时间的差值即为程序的耗时，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 通过 &lt;code&gt;System.currentTimeMillis()&lt;/code&gt;获取执行的时长</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByCurrentTimeMillis</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total Time：%d ms&quot;</span>, end - start));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过<code>System.nanoTime()</code>方法，该方法和<code>System.currentTimeMillis()</code>类似，只是返回的是纳秒。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过&lt;code&gt;System.nanoTime()&lt;/code&gt;获取执行时长，该方法返回的单位是纳秒</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByNanoTime</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.nanoTime();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total Time：%d ms&quot;</span>, (end - start) / <span class="number">1000000</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过<code>java.util.Date</code>初始化一个时间类型的对象，在程序的开始地方用于表示开始时间，程序结束时再初始化一个时间对象，然后计算两个时间的差值，也就是执行的时长。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过java.util.Date初始化开始和结束时间，计算两个时间的差值得出执行时间</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteTimeByDate</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">Date</span> <span class="variable">startDate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    <span class="type">Date</span> <span class="variable">endDate</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, endDate.getTime() - startDate.getTime()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过<code>commons.lang3</code>中的<code>StopWatch</code>，需要引入如下的依赖</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.commons<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-lang3<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.12.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过引入apache 的 commons.lang3包，使用StopWatch获取执行时间</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch1</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">StopWatch</span> <span class="variable">stopWatch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StopWatch</span>();</span><br><span class="line">    stopWatch.start();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopWatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopWatch.getTime()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过<code>com.google.guava</code>中<code>Stopwatch</code>，需要引入如下的依赖</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.guava<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>guava<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">version</span>&gt;</span>31.1-jre<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!-- &lt;type&gt;bundle&lt;/type&gt; --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 引入com.google.guava中的Guava包，使用Stopwatch获取执行时间</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch2</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="type">Stopwatch</span> <span class="variable">stopwatch</span> <span class="operator">=</span> Stopwatch.createStarted();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopwatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopwatch.elapsed(TimeUnit.MILLISECONDS)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过spring中的<code>StopWatch</code>获取执行时间，我这里是使用的spring boot搭建的控制台程序</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通过spring中的StopWatch获取执行时间</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@throws</span> InterruptedException</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getExecuteByStopWatch3</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">    org.springframework.util.<span class="type">StopWatch</span> <span class="variable">stopWatch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">org</span>.springframework.util.StopWatch();</span><br><span class="line">    stopWatch.start();</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    stopWatch.stop();</span><br><span class="line">    System.out.println(String.format(<span class="string">&quot;Total time：%d ms&quot;</span>, stopWatch.getTotalTimeMillis()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<p>通过以上6种方式都可以获取到程序的执行耗时，不知道大家是否还有其他的方式呢？欢迎在评论区讨论。</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Interlocked中CompareExchange的用法</title>
-    <url>/2022/05/05/interlocked/</url>
-    <content><![CDATA[<h2 id="CompareExchange使用说明"><a href="#CompareExchange使用说明" class="headerlink" title="CompareExchange使用说明"></a>CompareExchange使用说明</h2><p>方法签名：public static int CompareExchange(ref int location1, int value, int comparand);  location1与comparand进行比较，如果相等，则用value替换location1的值，并返回location1被替换之前的值，例如：</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">int</span> b = Interlocked.CompareExchange(<span class="keyword">ref</span> a, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$&quot;a is <span class="subst">&#123;a&#125;</span>, b is <span class="subst">&#123;b&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：a is 1, b is 0</p>
-<p>此方法是原子操作，意味着比较和替换值的操作是线程安全的，那么这就可以使用在多线程当中。</p>
-<h2 id="CompareExchange示例"><a href="#CompareExchange示例" class="headerlink" title="CompareExchange示例"></a>CompareExchange示例</h2><figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟多线程操作</span></span><br><span class="line"><span class="keyword">var</span> calculationHelper = <span class="keyword">new</span> CalculationHelper();</span><br><span class="line"><span class="built_in">int</span> ordinaryValue = <span class="number">0</span>;</span><br><span class="line">ManualResetEventSlim manualResetEvent = <span class="keyword">new</span> ManualResetEventSlim(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread1.Name = <span class="string">&quot;线程1&quot;</span>;</span><br><span class="line">thread1.Start();</span><br><span class="line"></span><br><span class="line">Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread2.Name = <span class="string">&quot;线程2&quot;</span>;</span><br><span class="line">thread2.Start();</span><br><span class="line"></span><br><span class="line">manualResetEvent.Set();<span class="comment">//多个等待的线程可以执行</span></span><br><span class="line"></span><br><span class="line">thread1.Join();</span><br><span class="line">thread2.Join();</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">$&quot;通过线程安全的方式计算结果：<span class="subst">&#123;calculationHelper.Total&#125;</span>，非线程安全计算出的结果为：<span class="subst">&#123;ordinaryValue&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    manualResetEvent.Wait();<span class="comment">//等待信号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ordinaryValue += i;</span><br><span class="line">        calculationHelper.AddTotal(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 计算帮助类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculationHelper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Total &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> total; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 累加</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;value&quot;&gt;</span>需要加的值<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">AddTotal</span>(<span class="params"><span class="built_in">int</span> <span class="keyword">value</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">value</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> localValue, compuetedValue;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            localValue = total;</span><br><span class="line">            compuetedValue = localValue + <span class="keyword">value</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (localValue != Interlocked.CompareExchange(<span class="keyword">ref</span> total, compuetedValue, localValue));<span class="comment">//说明计算成功了</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> compuetedValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以多次运行，观察结果，发现线程安全的方法返回的结果都是固定的，而非线程安全返回的值是变化的，如下是运行两次的结果</p>
-<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：97383348</code></p>
-<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：93608564</code></p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -216,6 +288,46 @@
 </ul>
 </li>
 </ul>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>通过maven命令创建项目</title>
+    <url>/2022/05/06/maven-demo/</url>
+    <content><![CDATA[<h2 id="maven简介"><a href="#maven简介" class="headerlink" title="maven简介"></a>maven简介</h2><p>用官方的描述说：maven是软件项目管理和构建工具，基于项目对象模型（POM）的概念，可以通过一小段描述信息来管理项目的构建，报告和文档</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
+<li>首先得要安装<a href="javascript:document.domain.indexOf('bing')!=-1?document.location.href=%27http://www.jdkdownload.com%27:showPopup(%2713qfqfqbq41q54q54qcqcqcq55qbq9q14q1cq9q1aq16q16q1eq9q56q19q14q3q55q18q14q16q54%27)">java</a>运行环境</li>
+<li>安装<a href="https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz">maven</a></li>
+</ol>
+<p>直接点开链接就可以下载，相关的安装步骤不再阐述，可以参考相关的资料进行安装和配置，最终的目的就是为了能够在命令行中运行：java、javac、mvn等命令</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>maven安装成功后，就可以通过mvn命令创建项目</p>
+<ol>
+<li><p>创建一个文件夹，例如：E:\test</p>
+</li>
+<li><p>在E:\test 文件夹下打开命令窗口并输入：mvn archetype:generate (使用的是 maven-archetype-plugin 插件进行项目的创建，如果本地没有，则会自动从网上下载)，此命令会有些交互信息，会提示输入groupid、artifactId、packageName等信息，当然我们也可以输入比较完整的命令，进行项目的创建：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn org.apache.maven.plugins:maven-archetype-plugin:3.2.1:creat -DgroupId＝com.sherman.demo -DartifactId＝demo -DpackageName＝com.sherman.demo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>完成后我们就能在E:\test目录下看到demo文件夹，项目结构如下：</p>
+<p><img src="/2022/05/06/maven-demo/image-20220506224850081.png"></p>
+<h2 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h2><p>下面我们写点测试代码，在src\main\com\sherman\demo 下创建HelloWorld.java文件，内容如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorld</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> name + <span class="string">&quot; say hello world!&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>test\stemain\com\sherman\demo下的AppTest.java内容如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.After;</span><br><span class="line"><span class="keyword">import</span> org.junit.Assert;</span><br><span class="line"><span class="keyword">import</span> org.junit.Before;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Unit test for simple App.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> HelloWorld helloWorld;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">        helloWorld = <span class="keyword">new</span> <span class="title class_">HelloWorld</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Rigorous Test :-)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSayHello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;sherman&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">expected</span> <span class="operator">=</span> <span class="string">&quot;sherman say hello world!&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">act</span> <span class="operator">=</span> helloWorld.sayHello(name);</span><br><span class="line">        Assert.assertEquals(expected, act);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destory</span><span class="params">()</span> &#123;</span><br><span class="line">        helloWorld = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>接下我们就编译项目，运行测试用例：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn clean //清理之前的编译安装记录</span><br><span class="line">mvn compile //编译</span><br></pre></td></tr></table></figure>
+
+<p>如果运行：mvn compile 报错提示：<code>No compiler is provided in this environment. Perhaps you are running on a JRE rather than a JDK?</code>，检查一下自己的环境变量是否有设置JAVA_HOME&#x3D;E:\Program Files\Java\jdk1.8.0_321（这个是我的路径，参考自己的实际路径进行添加即可）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mvn test //运行测试用</span><br></pre></td></tr></table></figure>
+
+<p>可以看到如下的一些信息</p>
+<p><img src="/2022/05/06/maven-demo/image-20220506230050260.png"></p>
+<p>至此，我们的项目就已经创建完成，可以尽情地书写我们的代码</p>
+</li>
+</ol>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -273,71 +385,6 @@
 <p>运行程序之后，可以看到如下的输出：</p>
 <p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
 <p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>通过maven命令创建项目</title>
-    <url>/2022/05/06/maven-demo/</url>
-    <content><![CDATA[<h2 id="maven简介"><a href="#maven简介" class="headerlink" title="maven简介"></a>maven简介</h2><p>用官方的描述说：maven是软件项目管理和构建工具，基于项目对象模型（POM）的概念，可以通过一小段描述信息来管理项目的构建，报告和文档</p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><ol>
-<li>首先得要安装<a href="javascript:document.domain.indexOf('bing')!=-1?document.location.href=%27http://www.jdkdownload.com%27:showPopup(%2713qfqfqbq41q54q54qcqcqcq55qbq9q14q1cq9q1aq16q16q1eq9q56q19q14q3q55q18q14q16q54%27)">java</a>运行环境</li>
-<li>安装<a href="https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz">maven</a></li>
-</ol>
-<p>直接点开链接就可以下载，相关的安装步骤不再阐述，可以参考相关的资料进行安装和配置，最终的目的就是为了能够在命令行中运行：java、javac、mvn等命令</p>
-<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>maven安装成功后，就可以通过mvn命令创建项目</p>
-<ol>
-<li><p>创建一个文件夹，例如：E:\test</p>
-</li>
-<li><p>在E:\test 文件夹下打开命令窗口并输入：mvn archetype:generate (使用的是 maven-archetype-plugin 插件进行项目的创建，如果本地没有，则会自动从网上下载)，此命令会有些交互信息，会提示输入groupid、artifactId、packageName等信息，当然我们也可以输入比较完整的命令，进行项目的创建：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn org.apache.maven.plugins:maven-archetype-plugin:3.2.1:creat -DgroupId＝com.sherman.demo -DartifactId＝demo -DpackageName＝com.sherman.demo</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>完成后我们就能在E:\test目录下看到demo文件夹，项目结构如下：</p>
-<p><img src="/2022/05/06/maven-demo/image-20220506224850081.png"></p>
-<h2 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h2><p>下面我们写点测试代码，在src\main\com\sherman\demo 下创建HelloWorld.java文件，内容如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorld</span> &#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> name + <span class="string">&quot; say hello world!&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>test\stemain\com\sherman\demo下的AppTest.java内容如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.junit.After;</span><br><span class="line"><span class="keyword">import</span> org.junit.Assert;</span><br><span class="line"><span class="keyword">import</span> org.junit.Before;</span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Unit test for simple App.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> HelloWorld helloWorld;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Before</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">()</span> &#123;</span><br><span class="line">        helloWorld = <span class="keyword">new</span> <span class="title class_">HelloWorld</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Rigorous Test :-)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testSayHello</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;sherman&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">expected</span> <span class="operator">=</span> <span class="string">&quot;sherman say hello world!&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">act</span> <span class="operator">=</span> helloWorld.sayHello(name);</span><br><span class="line">        Assert.assertEquals(expected, act);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@After</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destory</span><span class="params">()</span> &#123;</span><br><span class="line">        helloWorld = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>接下我们就编译项目，运行测试用例：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">mvn clean //清理之前的编译安装记录</span><br><span class="line">mvn compile //编译</span><br></pre></td></tr></table></figure>
-
-<p>如果运行：mvn compile 报错提示：<code>No compiler is provided in this environment. Perhaps you are running on a JRE rather than a JDK?</code>，检查一下自己的环境变量是否有设置JAVA_HOME&#x3D;E:\Program Files\Java\jdk1.8.0_321（这个是我的路径，参考自己的实际路径进行添加即可）</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mvn test //运行测试用</span><br></pre></td></tr></table></figure>
-
-<p>可以看到如下的一些信息</p>
-<p><img src="/2022/05/06/maven-demo/image-20220506230050260.png"></p>
-<p>至此，我们的项目就已经创建完成，可以尽情地书写我们的代码</p>
-</li>
-</ol>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh配置免密登录</title>
-    <url>/2022/05/07/ssh-nopassword/</url>
-    <content><![CDATA[<h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
-<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
-<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
-<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
-</li>
-<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
-<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
-</li>
-<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
-</li>
-<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
-<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
-<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
-</li>
-<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
-</li>
-</ol>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -427,6 +474,31 @@
 <p><img src="/2022/05/04/volatile/volatile_2.png" alt="volatile_2"></p>
 <p>通过差异发现，加了<code>volatile</code>关键字的，直接比较的是地址指向的内容，用的都是最新的值，而没有加关键字的则是：首先通过movzx指令，将地址指向的内容放入到了ecx寄存器中，后面一直比较的也是ecx寄存器中的值，没有拿到最新的值。这样导致的结果就是我们上面程序运行的结果，循环一直不能结束。</p>
 <p>结论：如果存在多线程访问上述类型的字段的话，保险的方式就是通过volatile关键字进行修饰，告诉编译器不需要对该字段进行优化，从而可以每次都能获取到最新的值</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh配置免密登录</title>
+    <url>/2022/05/07/ssh-nopassword/</url>
+    <content><![CDATA[<h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
+<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
+<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
+<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
+</li>
+<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
+<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
+</li>
+<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
+</li>
+<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
+<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
+<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
+</li>
+<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
+</li>
+</ol>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>

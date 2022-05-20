@@ -174,6 +174,111 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/25/querable-enumerable/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/25/querable-enumerable/" class="post-title-link" itemprop="url">C#中IEnumerable与IQueryable的区别</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-25 23:32:51" itemprop="dateCreated datePublished" datetime="2022-04-25T23:32:51+08:00">2022-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-26 13:49:47" itemprop="dateModified" datetime="2022-04-26T13:49:47+08:00">2022-04-26</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/25/querable-enumerable/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/25/querable-enumerable/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
+<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">new</span> console -o queryable_enumerable</span><br></pre></td></tr></table></figure>
+
+<p>添加sqlite EF操作的类库的引用：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.EntityFrameworkCore.Sqlite</span><br><span class="line">dotnet <span class="keyword">add</span> pacakge Microsoft.EntityFrameworkCore.Tools</span><br></pre></td></tr></table></figure>
+
+<p>还需要安装EF命令相关的类库</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.EntityFrameworkCore.Tools.DotNet</span><br></pre></td></tr></table></figure>
+
+<p>修改项目文件的内容如下：</p>
+<p><img src="/2022/04/25/querable-enumerable/image-20220426131129413.png" alt="image-20220426131129413"></p>
+<h2 id="添加数据操作类"><a href="#添加数据操作类" class="headerlink" title="添加数据操作类"></a>添加数据操作类</h2><p>创建DBContext类库：</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">MyContext</span> : <span class="title">DbContext</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ILoggerFactory MyLoggerFactory</span><br><span class="line">        = LoggerFactory.Create(builder =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="meta">#<span class="keyword">if</span> DEBUG</span></span><br><span class="line">            builder.AddConsole();</span><br><span class="line">        <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">public</span> DbSet&lt;User&gt; Users &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnConfiguring</span>(<span class="params">DbContextOptionsBuilder optionsBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//写完整地路径</span></span><br><span class="line">            <span class="built_in">string</span> connString = <span class="string">@&quot;Data Source=E:\xxx\xxx\xxx\xxx\queryable_enumerable\testdb.db&quot;</span>;</span><br><span class="line">            optionsBuilder.UseSqlite(connString).UseLoggerFactory(MyLoggerFactory);</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>便于观察ef操作数据库的执行sql，这里将日志输出到控制台，需要引用类库Microsoft.Extensions.Logging.Console</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.Extensions.Logging.Console</span><br></pre></td></tr></table></figure>
+
+<p>添加 User实体类</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Id &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    [<span class="meta">MaxLength(100), Required</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="执行EF命令，更新数据库"><a href="#执行EF命令，更新数据库" class="headerlink" title="执行EF命令，更新数据库"></a>执行EF命令，更新数据库</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dotnet ef migrations <span class="keyword">add</span> <span class="string">&quot;InitialCreate&quot;</span></span><br><span class="line">dotnet ef database update</span><br></pre></td></tr></table></figure>
+
+<h2 id="添加、获取数据"><a href="#添加、获取数据" class="headerlink" title="添加、获取数据"></a>添加、获取数据</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// See https://aka.ms/new-console-template for more information</span></span><br><span class="line"><span class="keyword">using</span> queryable_enumerable;</span><br><span class="line"><span class="keyword">using</span> System.Text.Json;</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line"></span><br><span class="line">MyContext myContext = <span class="keyword">new</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//await myContext.Users.AddAsync(new User &#123; Name = &quot;sherman&quot; &#125;);</span></span><br><span class="line"><span class="comment">//await myContext.SaveChangesAsync();</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> users = myContext.Users.AsEnumerable().Where(p =&gt; p.Id &gt; <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Console.WriteLine(JsonSerializer.Serialize(users));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> querable = myContext.Users.Where(p =&gt; p.Id &gt; <span class="number">0</span>);  </span><br><span class="line"></span><br><span class="line">Console.WriteLine(JsonSerializer.Serialize(querable));</span><br><span class="line"></span><br><span class="line">myContext.Dispose();</span><br></pre></td></tr></table></figure>
+
+<p>运行程序之后，可以看到如下的输出：</p>
+<p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
+<p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/25/hexo-image/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -485,7 +590,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

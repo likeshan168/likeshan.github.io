@@ -174,6 +174,142 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/20/java-extension/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/20/java-extension/" class="post-title-link" itemprop="url">java中的扩展方法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-20 09:20:26 / 修改时间：14:56:28" itemprop="dateCreated datePublished" datetime="2022-05-20T09:20:26+08:00">2022-05-20</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/20/java-extension/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/20/java-extension/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="扩展方法"><a href="#扩展方法" class="headerlink" title="扩展方法"></a>扩展方法</h2><p>如果想要对现有的类添加新的方法，但是又不太可能去修改原有类的时候，我们就可以通过扩展方法进行扩展（当然，也有其他的方式可以达到目的），java原生是不支持扩展方法的，熟悉其他语言的同学可能知道，例如：C#、go、kotlin等都是原生支持扩展方法的，那如果想在java中也要实现扩展方法，比如：“hello world”.print();实现 这样的功能，该如何做呢？</p>
+<h2 id="Manifold介绍"><a href="#Manifold介绍" class="headerlink" title="Manifold介绍"></a>Manifold介绍</h2><p>Manifold是一个java的编译插件，其中包含了很多的功能，其中扩展方法就是其中之一，更多的功能介绍可以参考<a target="_blank" rel="noopener" href="http://manifold.systems/">官网</a>以及<a target="_blank" rel="noopener" href="https://github.com/manifold-systems/manifold">源代码</a></p>
+<p>接下来我们简单地通过代码的方式看看manifold是如何实现扩展方法的。</p>
+<ul>
+<li>首先，添加依赖，参考pom.xml文件如下</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>my-ext-app<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>My Java Extension App<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- set latest manifold version here --&gt;</span> </span><br><span class="line">        <span class="tag">&lt;<span class="name">manifold.version</span>&gt;</span>2022.1.14<span class="tag">&lt;/<span class="name">manifold.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>systems.manifold<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>manifold-ext-rt<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;manifold.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span>                                                                                                     </span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--Add the -Xplugin:Manifold argument for the javac compiler--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>11<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>11<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">encoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">encoding</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">compilerArgs</span>&gt;</span></span><br><span class="line">                        <span class="comment">&lt;!-- Configure manifold plugin--&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">arg</span>&gt;</span>-Xplugin:Manifold<span class="tag">&lt;/<span class="name">arg</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">compilerArgs</span>&gt;</span></span><br><span class="line">                    <span class="comment">&lt;!-- Add the processor path for the plugin --&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>systems.manifold<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>manifold-ext<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;manifold.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>定义一个类，例如：StringExtension</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> extensions.java.lang.String;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Extension;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.This;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Extension</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringExtension</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">print</span><span class="params">(<span class="meta">@This</span> String thiz)</span> &#123;</span><br><span class="line">        System.out.println(thiz);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Extension</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">lineSeparator</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> System.lineSeparator();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Extension</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello &quot;</span> + name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>特别说明下：扩展的包的定义是有一定的限制，所有的扩展类必须是在<code>extensions</code>包下面定义，后面加上要扩展的类的包，例如上代码：<code>extensions.java.lang.String</code>,在java9以及后续的版本中，我们还可以加上自己的模块名称，比如：com.test，那么扩展的包名就可以是：<code>com.test.extensions.java.lang.String</code>,在java8中<code>extensions</code>必须是根。</p>
+<p>扩展方法所在的类必须添加@Extension注解，扩展方法必须是静态的公共方法，而且第一个参数为：@This+扩展的类型+参数名称，如果是静态的扩展方法那么需要在静态方法上面加@Extension注解，参数不再需要@This 进行限定，定义完成之后我们可以通过如下的方式进行调用了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;hello world&quot;</span>.print();</span><br><span class="line">System.out.println(String.sayHello(<span class="string">&quot;sherman&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>当然，为了更棒的体验，还是要在idea中装一个插件Manifold</p>
+<p><img src="/2022/05/20/java-extension/image-20220520121202724.png" alt="image-20220520121202724"></p>
+<h2 id="其他类型扩展"><a href="#其他类型扩展" class="headerlink" title="其他类型扩展"></a>其他类型扩展</h2><p>比如，我想针对Iterable<T>这个类型进行扩展，可以参考如下的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> extensions.java.lang.Iterable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Extension;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.Self;</span><br><span class="line"><span class="keyword">import</span> manifold.ext.rt.api.This;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.NoSuchElementException;</span><br><span class="line"><span class="keyword">import</span> java.util.function.Predicate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Extension</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CollectionExtension</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T <span class="title function_">first</span><span class="params">(<span class="meta">@This</span> Iterable&lt;T&gt; thiz, Predicate&lt;T&gt; predicate)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (T element : thiz) &#123;</span><br><span class="line">            <span class="keyword">if</span> (predicate.test(element)) &#123;</span><br><span class="line">                <span class="keyword">return</span> element;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchElementException</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">list.add(<span class="string">&quot;one&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;two&quot;</span>);</span><br><span class="line">list.add(<span class="string">&quot;three&quot;</span>);</span><br><span class="line">Predicate&lt;String&gt; getFirst = s -&gt; Objects.equals(s, <span class="string">&quot;one&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">first</span> <span class="operator">=</span> list.first(getFirst);</span><br><span class="line">System.out.println(first);</span><br></pre></td></tr></table></figure>
+
+<p>Manifold已经为我们提供了一些扩展</p>
+<ul>
+<li><p><strong>Collections</strong></p>
+<p>定义在manifold-io模块中，扩展了以下的类</p>
+<ul>
+<li>java.io.BufferedReader</li>
+<li>java.io.File</li>
+<li>java.io.InputStream</li>
+<li>java.io.OutputStream</li>
+<li>java.io.Reader</li>
+<li>java.io.Writer</li>
+</ul>
+</li>
+<li><p><strong>Text</strong></p>
+<p>定义在manifold-text模块中，扩展了以下的类</p>
+<ul>
+<li>java.lang.CharSequence</li>
+<li>java.lang.String</li>
+</ul>
+</li>
+<li><p><strong>I&#x2F;O</strong></p>
+<p>定义在manifold-io模块中，扩展了以下的类</p>
+<ul>
+<li>java.io.BufferedReader</li>
+<li>java.io.File</li>
+<li>java.io.InputStream</li>
+<li>java.io.OutputStream</li>
+<li>java.io.Reader</li>
+<li>java.io.Writer</li>
+</ul>
+</li>
+<li><p><strong>Web&#x2F;JSON</strong></p>
+<p>定义在manifold-json模块中，扩展了以下的类</p>
+<ul>
+<li>java.net.URL</li>
+<li>manifold.rt.api.Bindings</li>
+</ul>
+</li>
+</ul>
+<p>我们也可以将自己的扩展以包的形式提供出去，具体注意事项可以参考官方的文档。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/16/calculate-time/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1061,111 +1197,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/25/querable-enumerable/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Sherman">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/04/25/querable-enumerable/" class="post-title-link" itemprop="url">C#中IEnumerable与IQueryable的区别</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-04-25 23:32:51" itemprop="dateCreated datePublished" datetime="2022-04-25T23:32:51+08:00">2022-04-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-26 13:49:47" itemprop="dateModified" datetime="2022-04-26T13:49:47+08:00">2022-04-26</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2022/04/25/querable-enumerable/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/25/querable-enumerable/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
-<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">new</span> console -o queryable_enumerable</span><br></pre></td></tr></table></figure>
-
-<p>添加sqlite EF操作的类库的引用：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.EntityFrameworkCore.Sqlite</span><br><span class="line">dotnet <span class="keyword">add</span> pacakge Microsoft.EntityFrameworkCore.Tools</span><br></pre></td></tr></table></figure>
-
-<p>还需要安装EF命令相关的类库</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.EntityFrameworkCore.Tools.DotNet</span><br></pre></td></tr></table></figure>
-
-<p>修改项目文件的内容如下：</p>
-<p><img src="/2022/04/25/querable-enumerable/image-20220426131129413.png" alt="image-20220426131129413"></p>
-<h2 id="添加数据操作类"><a href="#添加数据操作类" class="headerlink" title="添加数据操作类"></a>添加数据操作类</h2><p>创建DBContext类库：</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">MyContext</span> : <span class="title">DbContext</span></span><br><span class="line">&#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ILoggerFactory MyLoggerFactory</span><br><span class="line">        = LoggerFactory.Create(builder =&gt;</span><br><span class="line">        &#123;</span><br><span class="line">        <span class="meta">#<span class="keyword">if</span> DEBUG</span></span><br><span class="line">            builder.AddConsole();</span><br><span class="line">        <span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">public</span> DbSet&lt;User&gt; Users &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnConfiguring</span>(<span class="params">DbContextOptionsBuilder optionsBuilder</span>)</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//写完整地路径</span></span><br><span class="line">            <span class="built_in">string</span> connString = <span class="string">@&quot;Data Source=E:\xxx\xxx\xxx\xxx\queryable_enumerable\testdb.db&quot;</span>;</span><br><span class="line">            optionsBuilder.UseSqlite(connString).UseLoggerFactory(MyLoggerFactory);</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
-
-<p>便于观察ef操作数据库的执行sql，这里将日志输出到控制台，需要引用类库Microsoft.Extensions.Logging.Console</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">add</span> package Microsoft.Extensions.Logging.Console</span><br></pre></td></tr></table></figure>
-
-<p>添加 User实体类</p>
-<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">internal</span> <span class="keyword">class</span> <span class="title">User</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Id &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    [<span class="meta">MaxLength(100), Required</span>]</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> Name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="执行EF命令，更新数据库"><a href="#执行EF命令，更新数据库" class="headerlink" title="执行EF命令，更新数据库"></a>执行EF命令，更新数据库</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dotnet ef migrations <span class="keyword">add</span> <span class="string">&quot;InitialCreate&quot;</span></span><br><span class="line">dotnet ef database update</span><br></pre></td></tr></table></figure>
-
-<h2 id="添加、获取数据"><a href="#添加、获取数据" class="headerlink" title="添加、获取数据"></a>添加、获取数据</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// See https://aka.ms/new-console-template for more information</span></span><br><span class="line"><span class="keyword">using</span> queryable_enumerable;</span><br><span class="line"><span class="keyword">using</span> System.Text.Json;</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line"></span><br><span class="line">MyContext myContext = <span class="keyword">new</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//await myContext.Users.AddAsync(new User &#123; Name = &quot;sherman&quot; &#125;);</span></span><br><span class="line"><span class="comment">//await myContext.SaveChangesAsync();</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> users = myContext.Users.AsEnumerable().Where(p =&gt; p.Id &gt; <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">Console.WriteLine(JsonSerializer.Serialize(users));</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> querable = myContext.Users.Where(p =&gt; p.Id &gt; <span class="number">0</span>);  </span><br><span class="line"></span><br><span class="line">Console.WriteLine(JsonSerializer.Serialize(querable));</span><br><span class="line"></span><br><span class="line">myContext.Dispose();</span><br></pre></td></tr></table></figure>
-
-<p>运行程序之后，可以看到如下的输出：</p>
-<p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
-<p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1235,7 +1266,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
