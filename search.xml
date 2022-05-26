@@ -34,6 +34,80 @@
       </tags>
   </entry>
   <entry>
+    <title>hexo+typora+github图片路径问题</title>
+    <url>/2022/04/25/hexo-image/</url>
+    <content><![CDATA[<p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
+<h2 id="资源文件夹"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹</h2><p>直接引用官网的解释：</p>
+<p>资源（Asset）代表 <code>source</code> 文件夹中除了文章以外的所有文件，例如图片、CSS、JS 文件等。比方说，如果你的Hexo项目中只有少量图片，那最简单的方法就是将它们放在 <code>source/images</code> 文件夹中。然后通过类似于 <code>![](/images/image.jpg)</code> 的方法访问它们。</p>
+<p>对于那些想要更有规律地提供图片和其他资源以及想要将他们的资源分布在各个文章上的人来说，Hexo也提供了更组织化的方式来管理资源。这个稍微有些复杂但是管理资源非常方便的功能可以通过将 <code>config.yml</code> 文件中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+
+<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流</p>
+<h2 id="相对路径引用的标签插件"><a href="#相对路径引用的标签插件" class="headerlink" title="相对路径引用的标签插件"></a>相对路径引用的标签插件</h2><p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的<a href="https://hexo.io/docs/tag-plugins#Include-Assets">标签插件</a>被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如说：当你打开文章资源文件夹功能后，你把一个 <code>example.jpg</code> 图片放在了你的资源文件夹中，如果通过使用相对路径的常规 markdown 语法 <code>![](example.jpg)</code> ，它将 <em>不会</em> 出现在首页上。（但是它会在文章中按你期待的方式工作）</p>
+<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式，图片将会同时出现在文章和主页以及归档页中。</p>
+<p>这种方式，在本地开发中不是太友好</p>
+<h2 id="在markdown文件中嵌入图片"><a href="#在markdown文件中嵌入图片" class="headerlink" title="在markdown文件中嵌入图片"></a>在markdown文件中嵌入图片</h2><p>首先引用 <a href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a> 包</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
+
+<p>然后修改_config.yml文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
+
+<p>开启了之后，图片资源就会自动解析成对应的图片路径。比如：“test.jpg” 位于 “&#x2F;2022&#x2F;04&#x2F;25&#x2F;test&#x2F;test.jpg”,</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![](test.jpg)` 将会转换成 `&lt;img src=&quot;/2022/04/25/test/test.jpg&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式，虽然能解决发布之后图片展示的问题，但是不能解决本地typora编辑的问题，例如：有如下的目录结构：</p>
+<p><img src="/../images/image-20220425100849334.png" alt="image-20220425100849334"></p>
+<p>编辑hexo-github.md文件，如果写成：<img src="/2022/04/25/hexo-image/image-20220425100939907.png" alt="image-20220425100939907"></p>
+<p>这种相对路径之后，能在typora中显示图片，但是在网页上就不能展示图片，如果改成下面这种：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101023160.png" alt="image-20220425101023160"></p>
+<p>能在网页上显示图片，但是在typora中又不能显示，这个时候，我们就通过修改插件 hexo-renderer-marked 的代码，来兼容两方的需求，找到图片路径转换的代码：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101222552.png" alt="image-20220425101222552"></p>
+<p>其中红框中的代码就是新加的，这样我们在md文件中，路径写成：hexo-github&#x2F;image-20220423232811690.png 这样，就能同时在typora和网页上进行展示，</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>查看没有问题</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>openjdk编译</title>
+    <url>/2022/05/24/compile-openjdk/</url>
+    <content><![CDATA[<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
+<p>然后点击zip格式，下载压缩包的文件：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
+
+<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
+
+<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
+<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>深入理解Java虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何通过hexo+github pages搭建博客系统</title>
     <url>/2022/04/23/hexo-github/</url>
     <content><![CDATA[<h2 id="Hexo环境搭建"><a href="#Hexo环境搭建" class="headerlink" title="Hexo环境搭建"></a>Hexo环境搭建</h2><ul>
@@ -93,47 +167,18 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo+typora+github图片路径问题</title>
-    <url>/2022/04/25/hexo-image/</url>
-    <content><![CDATA[<p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
-<h2 id="资源文件夹"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹</h2><p>直接引用官网的解释：</p>
-<p>资源（Asset）代表 <code>source</code> 文件夹中除了文章以外的所有文件，例如图片、CSS、JS 文件等。比方说，如果你的Hexo项目中只有少量图片，那最简单的方法就是将它们放在 <code>source/images</code> 文件夹中。然后通过类似于 <code>![](/images/image.jpg)</code> 的方法访问它们。</p>
-<p>对于那些想要更有规律地提供图片和其他资源以及想要将他们的资源分布在各个文章上的人来说，Hexo也提供了更组织化的方式来管理资源。这个稍微有些复杂但是管理资源非常方便的功能可以通过将 <code>config.yml</code> 文件中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+    <title>Interlocked中CompareExchange的用法</title>
+    <url>/2022/05/05/interlocked/</url>
+    <content><![CDATA[<h2 id="CompareExchange使用说明"><a href="#CompareExchange使用说明" class="headerlink" title="CompareExchange使用说明"></a>CompareExchange使用说明</h2><p>方法签名：public static int CompareExchange(ref int location1, int value, int comparand);  location1与comparand进行比较，如果相等，则用value替换location1的值，并返回location1被替换之前的值，例如：</p>
+<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">int</span> b = Interlocked.CompareExchange(<span class="keyword">ref</span> a, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$&quot;a is <span class="subst">&#123;a&#125;</span>, b is <span class="subst">&#123;b&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
 
-<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流</p>
-<h2 id="相对路径引用的标签插件"><a href="#相对路径引用的标签插件" class="headerlink" title="相对路径引用的标签插件"></a>相对路径引用的标签插件</h2><p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的<a href="https://hexo.io/docs/tag-plugins#Include-Assets">标签插件</a>被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：a is 1, b is 0</p>
+<p>此方法是原子操作，意味着比较和替换值的操作是线程安全的，那么这就可以使用在多线程当中。</p>
+<h2 id="CompareExchange示例"><a href="#CompareExchange示例" class="headerlink" title="CompareExchange示例"></a>CompareExchange示例</h2><figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟多线程操作</span></span><br><span class="line"><span class="keyword">var</span> calculationHelper = <span class="keyword">new</span> CalculationHelper();</span><br><span class="line"><span class="built_in">int</span> ordinaryValue = <span class="number">0</span>;</span><br><span class="line">ManualResetEventSlim manualResetEvent = <span class="keyword">new</span> ManualResetEventSlim(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread1.Name = <span class="string">&quot;线程1&quot;</span>;</span><br><span class="line">thread1.Start();</span><br><span class="line"></span><br><span class="line">Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread2.Name = <span class="string">&quot;线程2&quot;</span>;</span><br><span class="line">thread2.Start();</span><br><span class="line"></span><br><span class="line">manualResetEvent.Set();<span class="comment">//多个等待的线程可以执行</span></span><br><span class="line"></span><br><span class="line">thread1.Join();</span><br><span class="line">thread2.Join();</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">$&quot;通过线程安全的方式计算结果：<span class="subst">&#123;calculationHelper.Total&#125;</span>，非线程安全计算出的结果为：<span class="subst">&#123;ordinaryValue&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    manualResetEvent.Wait();<span class="comment">//等待信号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ordinaryValue += i;</span><br><span class="line">        calculationHelper.AddTotal(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 计算帮助类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculationHelper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Total &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> total; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 累加</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;value&quot;&gt;</span>需要加的值<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">AddTotal</span>(<span class="params"><span class="built_in">int</span> <span class="keyword">value</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">value</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> localValue, compuetedValue;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            localValue = total;</span><br><span class="line">            compuetedValue = localValue + <span class="keyword">value</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (localValue != Interlocked.CompareExchange(<span class="keyword">ref</span> total, compuetedValue, localValue));<span class="comment">//说明计算成功了</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> compuetedValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>比如说：当你打开文章资源文件夹功能后，你把一个 <code>example.jpg</code> 图片放在了你的资源文件夹中，如果通过使用相对路径的常规 markdown 语法 <code>![](example.jpg)</code> ，它将 <em>不会</em> 出现在首页上。（但是它会在文章中按你期待的方式工作）</p>
-<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过这种方式，图片将会同时出现在文章和主页以及归档页中。</p>
-<p>这种方式，在本地开发中不是太友好</p>
-<h2 id="在markdown文件中嵌入图片"><a href="#在markdown文件中嵌入图片" class="headerlink" title="在markdown文件中嵌入图片"></a>在markdown文件中嵌入图片</h2><p>首先引用 <a href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a> 包</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
-
-<p>然后修改_config.yml文件</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
-
-<p>开启了之后，图片资源就会自动解析成对应的图片路径。比如：“test.jpg” 位于 “&#x2F;2022&#x2F;04&#x2F;25&#x2F;test&#x2F;test.jpg”,</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">![](test.jpg)` 将会转换成 `&lt;img src=&quot;/2022/04/25/test/test.jpg&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>这种方式，虽然能解决发布之后图片展示的问题，但是不能解决本地typora编辑的问题，例如：有如下的目录结构：</p>
-<p><img src="/../images/image-20220425100849334.png" alt="image-20220425100849334"></p>
-<p>编辑hexo-github.md文件，如果写成：<img src="/2022/04/25/hexo-image/image-20220425100939907.png" alt="image-20220425100939907"></p>
-<p>这种相对路径之后，能在typora中显示图片，但是在网页上就不能展示图片，如果改成下面这种：</p>
-<p><img src="/2022/04/25/hexo-image/image-20220425101023160.png" alt="image-20220425101023160"></p>
-<p>能在网页上显示图片，但是在typora中又不能显示，这个时候，我们就通过修改插件 hexo-renderer-marked 的代码，来兼容两方的需求，找到图片路径转换的代码：</p>
-<p><img src="/2022/04/25/hexo-image/image-20220425101222552.png" alt="image-20220425101222552"></p>
-<p>其中红框中的代码就是新加的，这样我们在md文件中，路径写成：hexo-github&#x2F;image-20220423232811690.png 这样，就能同时在typora和网页上进行展示，</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-
-<p>查看没有问题</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+<p>可以多次运行，观察结果，发现线程安全的方法返回的结果都是固定的，而非线程安全返回的值是变化的，如下是运行两次的结果</p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：97383348</code></p>
+<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：93608564</code></p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -212,24 +257,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Interlocked中CompareExchange的用法</title>
-    <url>/2022/05/05/interlocked/</url>
-    <content><![CDATA[<h2 id="CompareExchange使用说明"><a href="#CompareExchange使用说明" class="headerlink" title="CompareExchange使用说明"></a>CompareExchange使用说明</h2><p>方法签名：public static int CompareExchange(ref int location1, int value, int comparand);  location1与comparand进行比较，如果相等，则用value替换location1的值，并返回location1被替换之前的值，例如：</p>
-<figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="built_in">int</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="built_in">int</span> b = Interlocked.CompareExchange(<span class="keyword">ref</span> a, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$&quot;a is <span class="subst">&#123;a&#125;</span>, b is <span class="subst">&#123;b&#125;</span>&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>输出结果：a is 1, b is 0</p>
-<p>此方法是原子操作，意味着比较和替换值的操作是线程安全的，那么这就可以使用在多线程当中。</p>
-<h2 id="CompareExchange示例"><a href="#CompareExchange示例" class="headerlink" title="CompareExchange示例"></a>CompareExchange示例</h2><figure class="highlight c#"><table><tr><td class="code"><pre><span class="line"><span class="comment">//模拟多线程操作</span></span><br><span class="line"><span class="keyword">var</span> calculationHelper = <span class="keyword">new</span> CalculationHelper();</span><br><span class="line"><span class="built_in">int</span> ordinaryValue = <span class="number">0</span>;</span><br><span class="line">ManualResetEventSlim manualResetEvent = <span class="keyword">new</span> ManualResetEventSlim(<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread1.Name = <span class="string">&quot;线程1&quot;</span>;</span><br><span class="line">thread1.Start();</span><br><span class="line"></span><br><span class="line">Thread thread2 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> ThreadStart(Test));</span><br><span class="line">thread2.Name = <span class="string">&quot;线程2&quot;</span>;</span><br><span class="line">thread2.Start();</span><br><span class="line"></span><br><span class="line">manualResetEvent.Set();<span class="comment">//多个等待的线程可以执行</span></span><br><span class="line"></span><br><span class="line">thread1.Join();</span><br><span class="line">thread2.Join();</span><br><span class="line"></span><br><span class="line">Console.WriteLine(<span class="string">$&quot;通过线程安全的方式计算结果：<span class="subst">&#123;calculationHelper.Total&#125;</span>，非线程安全计算出的结果为：<span class="subst">&#123;ordinaryValue&#125;</span>&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Test</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    manualResetEvent.Wait();<span class="comment">//等待信号</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10000</span>; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        ordinaryValue += i;</span><br><span class="line">        calculationHelper.AddTotal(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 计算帮助类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculationHelper</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="built_in">int</span> total = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> Total &#123; <span class="keyword">get</span> &#123; <span class="keyword">return</span> total; &#125; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 累加</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name=&quot;value&quot;&gt;</span>需要加的值<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="built_in">int</span> <span class="title">AddTotal</span>(<span class="params"><span class="built_in">int</span> <span class="keyword">value</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">value</span> == <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">value</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">int</span> localValue, compuetedValue;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            localValue = total;</span><br><span class="line">            compuetedValue = localValue + <span class="keyword">value</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (localValue != Interlocked.CompareExchange(<span class="keyword">ref</span> total, compuetedValue, localValue));<span class="comment">//说明计算成功了</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> compuetedValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以多次运行，观察结果，发现线程安全的方法返回的结果都是固定的，而非线程安全返回的值是变化的，如下是运行两次的结果</p>
-<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：97383348</code></p>
-<p><code>通过线程安全的方式计算出的结果：100010000，非线程安全计算出的结果为：93608564</code></p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>java中String、StringBuffer、StringBuilder之前的区别</title>
     <url>/2022/05/13/java-string-stringbuilder/</url>
     <content><![CDATA[<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>String、StringBuffer、StringBuilder都可以应用于字符串的处理，但是在内部实现上还是有区别的。</p>
@@ -294,6 +321,28 @@
       </tags>
   </entry>
   <entry>
+    <title>普通Maven项目中添加springboot支持</title>
+    <url>/2022/05/13/manually-add-springboot/</url>
+    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
+<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加一个controller，实现一个简单的api接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>通过maven命令创建项目</title>
     <url>/2022/05/06/maven-demo/</url>
     <content><![CDATA[<h2 id="maven简介"><a href="#maven简介" class="headerlink" title="maven简介"></a>maven简介</h2><p>用官方的描述说：maven是软件项目管理和构建工具，基于项目对象模型（POM）的概念，可以通过一小段描述信息来管理项目的构建，报告和文档</p>
@@ -328,28 +377,6 @@
 <p>至此，我们的项目就已经创建完成，可以尽情地书写我们的代码</p>
 </li>
 </ol>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>普通Maven项目中添加springboot支持</title>
-    <url>/2022/05/13/manually-add-springboot/</url>
-    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
-<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加一个controller，实现一个简单的api接口</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -435,6 +462,94 @@
       </tags>
   </entry>
   <entry>
+    <title>springboot引入公共项目打包失败的问题</title>
+    <url>/2022/05/25/springboot-common-project/</url>
+    <content><![CDATA[<h2 id="需求背景"><a href="#需求背景" class="headerlink" title="需求背景"></a>需求背景</h2><p>在项目开发过程中，总会有一些公共的代码，会被抽取到一个单独的模块当中，其他的项通过引入该项目的jar包，达到代码复用的目的，近期在学习springboot相关知识，正好也遇到这种场景，但是引入公共的模块时，打包项目总是提示找不到公共项目中的相关类，下面就说说问题产生的原因和解决的办法。</p>
+<h2 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h2><p>首先，创建一个公共的maven项目，artifactId：common，在其中添加一些公共的类，执行 mvn clean、mvn install命令</p>
+<p><img src="/2022/05/25/springboot-common-project/image-20220525212436417.png" alt="image-20220525212436417"></p>
+<p>然后再创建一个maven项目，比如：springmvc(名字大家随便取)，引入common的依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.sherman<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>编译springmvc项目，结果提示如下的错误信息：</p>
+<p><img src="/2022/05/25/springboot-common-project/image-20220525214158858.png" alt="image-20220525214158858"></p>
+<p>截图中的错误提示都是我在common模块中定义的类，但是在springmvc项目中却提示找不到，这个问题是由于我在common项目中指定了<code>spring-boot-maven-plugin</code>这个插件生成jar包</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">mainClass</span>&gt;</span>com.sherman.common.CommonApplication<span class="tag">&lt;/<span class="name">mainClass</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">id</span>&gt;</span>repackage<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>repackage<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后我把这个插件去掉，重新对common项目执行命令：mvn clean、mvn install，接着再重新编译springmvc项目，问题解决。 </p>
+<p>如果运行springmvc项目提示“Consider defining a bean of type ‘xxxx’ 类似的错误信息，需要在springmvc项目的启动中添加<code>@ComponentScan</code>注解</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.springmvc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ComponentScan(basePackages = &#123;&quot;com.sherman.common&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringmvcApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringmvcApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="打包区别"><a href="#打包区别" class="headerlink" title="打包区别"></a>打包区别</h2><p>通过上面的描述，是由于使用了<code>spring-boot-maven-plugin</code>进行打包，那通过该插件打包的程序一般是作为独立运行的jar，直接可以通过java -jar xxx.jar命令运行，而去掉这个插件之后就是生成了普通的jar包，只是包含模块中的代码，不包含依赖项，我们也可以通过观察生成的jar包文件的大小，来确认是否和描述的一致。</p>
+<p>使用<code>spring-boot-maven-plugin</code>插件生成jar的大小如下图所示：</p>
+<p><img src="/2022/05/25/springboot-common-project/image-20220525215649240.png" alt="image-20220525215649240"></p>
+<p>去掉<code>spring-boot-maven-plugin</code>之后生成的jar的大小如下图所示：</p>
+<p><img src="/2022/05/25/springboot-common-project/image-20220525220045455.png" alt="image-20220525220045455"></p>
+<p>希望此文能帮助那些遇到和我一样问题的同学。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>springboot配置swagger以及swagger2/3之间的区别</title>
+    <url>/2022/05/25/springboot-swagger/</url>
+    <content><![CDATA[<h2 id="依赖区别"><a href="#依赖区别" class="headerlink" title="依赖区别"></a>依赖区别</h2><p>swagger2需要引入如下两个依赖项：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.springfox<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springfox-swagger2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.springfox<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springfox-swagger-ui<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是到了swagger3中只需要引入一个依赖即可：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.springfox<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>springfox-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="swagger配置区别"><a href="#swagger配置区别" class="headerlink" title="swagger配置区别"></a>swagger配置区别</h2><p>swagger2的配置代码如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.springboot_demo.util;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.ApiInfoBuilder;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.PathSelectors;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.RequestHandlerSelectors;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.service.ApiInfo;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.service.Contact;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.spi.DocumentationType;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.spring.web.plugins.Docket;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.swagger2.annotations.EnableSwagger2;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableSwagger2</span> <span class="comment">//与swagger3不同的地方，swagger3使用@EnableOpenApi </span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Swagger2Config</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;swagger2.enabled&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">boolean</span> swagger2Enabled;<span class="comment">//读取配置，控制swagger是否启用</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Docket <span class="title function_">createRestApi</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Docket</span>(DocumentationType.SWAGGER_2) <span class="comment">//与swagger3不同的地方，swagger3使用OAS_30</span></span><br><span class="line">                .apiInfo(apiInfo())</span><br><span class="line">                .enable(swagger2Enabled)</span><br><span class="line">                .groupName(<span class="string">&quot;SwaggerGroupOneApi&quot;</span>)</span><br><span class="line">                .select()</span><br><span class="line">                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))</span><br><span class="line">                .paths(PathSelectors.any())</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApiInfo <span class="title function_">apiInfo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ApiInfoBuilder</span>()</span><br><span class="line">                .title(<span class="string">&quot;牛逼工具平台API接口文档&quot;</span>)</span><br><span class="line">                .termsOfServiceUrl(<span class="string">&quot;https://likeshan168.github.io&quot;</span>)</span><br><span class="line">                .contact(<span class="keyword">new</span> <span class="title class_">Contact</span>(<span class="string">&quot;Sherman&quot;</span>, <span class="string">&quot;https://likeshan168.github.io&quot;</span>, <span class="string">&quot;likeshan168@163.com&quot;</span>))</span><br><span class="line">                .version(<span class="string">&quot;1.0&quot;</span>)</span><br><span class="line">                .description(<span class="string">&quot;系统API描述&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>swagger2使用@EnableSwagger2进行注解，还有DocumentationType是SWAGGER_2</p>
+<p>swagger3的配置代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.springmvc.util;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.swagger.annotations.ApiOperation;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.ApiInfoBuilder;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.PathSelectors;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.builders.RequestHandlerSelectors;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.oas.annotations.EnableOpenApi;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.service.ApiInfo;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.service.Contact;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.spi.DocumentationType;</span><br><span class="line"><span class="keyword">import</span> springfox.documentation.spring.web.plugins.Docket;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableOpenApi</span> <span class="comment">//与swagger2不一样的地方，swagger2使用@EnableSwagger2</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Swagger3Config</span>  &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 读取配置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;swagger.enabled&#125;&quot;)</span></span><br><span class="line">    Boolean swaggerEnabled;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Docket <span class="title function_">createRestApi</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Docket</span>(DocumentationType.OAS_30)<span class="comment">//与swagger2不一样的地方，swagger2使用SWAGGER_2</span></span><br><span class="line">                .apiInfo(apiInfo())</span><br><span class="line">                .enable(swaggerEnabled)</span><br><span class="line">                .groupName(<span class="string">&quot;SwaggerGroupOneApi&quot;</span>)</span><br><span class="line">                .select()</span><br><span class="line">                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))</span><br><span class="line">                .paths(PathSelectors.any())</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApiInfo <span class="title function_">apiInfo</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ApiInfoBuilder</span>()</span><br><span class="line">                .title(<span class="string">&quot;牛逼工具平台API接口文档&quot;</span>)</span><br><span class="line">                .termsOfServiceUrl(<span class="string">&quot;https://likeshan168.github.io&quot;</span>)</span><br><span class="line">                .contact(<span class="keyword">new</span> <span class="title class_">Contact</span>(<span class="string">&quot;Sherman&quot;</span>, <span class="string">&quot;https://likeshan168.github.io&quot;</span>, <span class="string">&quot;likeshan168@163.com&quot;</span>))</span><br><span class="line">                .version(<span class="string">&quot;1.0&quot;</span>)</span><br><span class="line">                .description(<span class="string">&quot;系统API描述&quot;</span>)</span><br><span class="line">                .build();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="访问地址的区别"><a href="#访问地址的区别" class="headerlink" title="访问地址的区别"></a>访问地址的区别</h2><p>swagger2的访问地址为：<a href="http://ip:port/swagger-ui.html">http://ip:port/swagger-ui.html</a></p>
+<p>swagger3的访问地址为：<a href="http://ip:port/swagger-ui/">http://ip:port/swagger-ui/</a> 或者 <a href="http://ip:port/swagger-ui/index.html">http://ip:port/swagger-ui/index.html</a></p>
+<h2 id="其他问题"><a href="#其他问题" class="headerlink" title="其他问题"></a>其他问题</h2><p>在配置swagger的过程，碰到了404的情况，也是网上一通寻找答案，未能解决我的问题，主要的原因在于我下面这段代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.example.springboot_demo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ComponentScan(basePackages = &#123;&quot;com.sherman.common&quot;&#125;)</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringbootDemoApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringbootDemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>由于，我引入了另一个common的模块，所以我就通过@ComponentScan注解指定了需要扫描的包名称，但是却没有添加本项目的包在里面，导致发现不了本项目中的componet，service，controller等bean，只需要作如下修改即可：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(basePackages = &#123;&quot;com.sherman.common&quot;,&quot;com.example.springboot_demo&quot;&#125;)</span></span><br></pre></td></tr></table></figure>
+
+<p>至此，问题得以解决。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ssh配置免密登录</title>
+    <url>/2022/05/07/ssh-nopassword/</url>
+    <content><![CDATA[<h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
+<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
+<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
+<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
+</li>
+<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
+<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
+</li>
+<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
+</li>
+<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
+<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
+<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
+</li>
+<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
+</li>
+</ol>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C#中volatile关键字的作用</title>
     <url>/2022/05/04/volatile/</url>
     <content><![CDATA[<h2 id="volatile使用说明"><a href="#volatile使用说明" class="headerlink" title="volatile使用说明"></a>volatile使用说明</h2><p><code>volatile</code> 关键字指示一个字段可以由多个同时执行的线程修改。</p>
@@ -474,31 +589,6 @@
 <p><img src="/2022/05/04/volatile/volatile_2.png" alt="volatile_2"></p>
 <p>通过差异发现，加了<code>volatile</code>关键字的，直接比较的是地址指向的内容，用的都是最新的值，而没有加关键字的则是：首先通过movzx指令，将地址指向的内容放入到了ecx寄存器中，后面一直比较的也是ecx寄存器中的值，没有拿到最新的值。这样导致的结果就是我们上面程序运行的结果，循环一直不能结束。</p>
 <p>结论：如果存在多线程访问上述类型的字段的话，保险的方式就是通过volatile关键字进行修饰，告诉编译器不需要对该字段进行优化，从而可以每次都能获取到最新的值</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>ssh配置免密登录</title>
-    <url>/2022/05/07/ssh-nopassword/</url>
-    <content><![CDATA[<h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
-<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
-<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
-<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
-</li>
-<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
-<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
-</li>
-<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
-</li>
-<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
-<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
-<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
-</li>
-<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
-</li>
-</ol>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
