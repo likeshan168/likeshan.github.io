@@ -174,6 +174,198 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/11/json-to-object/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/11/json-to-object/" class="post-title-link" itemprop="url">json转换成C#类</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-11 10:42:12 / 修改时间：14:39:20" itemprop="dateCreated datePublished" datetime="2022-05-11T10:42:12+08:00">2022-05-11</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/11/json-to-object/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/11/json-to-object/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：<code>ContractResolver = new CamelCasePropertyNamesContractResolver()</code>，但是还是行不通。如果我们有事先定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。</p>
+<h2 id="动态生成实体类"><a href="#动态生成实体类" class="headerlink" title="动态生成实体类"></a>动态生成实体类</h2><ul>
+<li><p>创建一个控制台项目：<code>dotnet new console -o JsonToObject</code></p>
+</li>
+<li><p>新建一个json文件，里面就是需要转换的json内容</p>
+</li>
+<li><p>读取json内容，拼接json中涉及到的所有的类的定义</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line">Action&lt;<span class="built_in">string</span>&gt; Write = Console.WriteLine;</span><br><span class="line"><span class="keyword">var</span> jsonString = File.ReadAllText(<span class="string">&quot;demo.json&quot;</span>);<span class="comment">//读取json文件里的内容</span></span><br><span class="line"><span class="keyword">var</span> jObject = JObject.Parse(jsonString);<span class="comment">//Newtonsoft.Json中的JObject.Parse转换成json对象</span></span><br><span class="line"></span><br><span class="line">Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; classDicts = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt;();<span class="comment">//key为类名，value为类中的所有属性定义的字符串</span></span><br><span class="line">classDicts.Add(<span class="string">&quot;Root&quot;</span>, GetClassDefinion(jObject));<span class="comment">//拼接顶层的类</span></span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> jObject.Properties())</span><br><span class="line">&#123;</span><br><span class="line">    classDicts.Add(item.Name, GetClassDefinion(item.Value));</span><br><span class="line">    GetClasses(item.Value, classDicts);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//下面是将所有的类定义完整拼接起来</span></span><br><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="number">1024</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;using System;&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;using System.Collections.Generic;&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;namespace JsonToObject&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;&#123;&quot;</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> item <span class="keyword">in</span> classDicts)</span><br><span class="line">&#123;</span><br><span class="line">    sb.Append(<span class="string">$&quot;public class <span class="subst">&#123;item.Key&#125;</span>&quot;</span> + Environment.NewLine);</span><br><span class="line">    sb.Append(<span class="string">&quot;&#123;&quot;</span> + Environment.NewLine);</span><br><span class="line">    sb.Append(item.Value);</span><br><span class="line">    sb.Append(<span class="string">&quot;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">&#125;</span><br><span class="line">sb.AppendLine(<span class="string">&quot;&#125;&quot;</span>);</span><br><span class="line">Write(sb.ToString());</span><br><span class="line"></span><br><span class="line"><span class="comment">//递归遍历json节点，把需要定义的类存入classes</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetClasses</span>(<span class="params">JToken jToken, Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">string</span>&gt; classes</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (jToken <span class="keyword">is</span> JValue)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">var</span> childToken = jToken.First;</span><br><span class="line">    <span class="keyword">while</span> (childToken != <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (childToken.Type == JTokenType.Property)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> p = (JProperty)childToken;</span><br><span class="line">            <span class="keyword">var</span> valueType = p.Value.Type;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (valueType == JTokenType.Object)</span><br><span class="line">            &#123;</span><br><span class="line">                classes.Add(p.Name, GetClassDefinion(p.Value));</span><br><span class="line">                GetClasses(p.Value, classes);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (valueType == JTokenType.Array)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">foreach</span> (<span class="function"><span class="keyword">var</span> item <span class="title">in</span> (<span class="params">JArray</span>)p.Value)</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (item.Type == JTokenType.Object)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="keyword">if</span> (!classes.ContainsKey(p.Name))</span><br><span class="line">                        &#123;</span><br><span class="line">                            classes.Add(p.Name, GetClassDefinion(item));</span><br><span class="line">                        &#125;</span><br><span class="line"></span><br><span class="line">                        GetClasses(item, classes);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        childToken = childToken.Next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//获取类中的所有的属性</span></span><br><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">GetClassDefinion</span>(<span class="params">JToken jToken</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    StringBuilder sb = <span class="keyword">new</span>(<span class="number">256</span>);</span><br><span class="line">    <span class="keyword">var</span> subValueToken = jToken.First();</span><br><span class="line">    <span class="keyword">while</span> (subValueToken != <span class="literal">null</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (subValueToken.Type == JTokenType.Property)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> p = (JProperty)subValueToken;</span><br><span class="line">            <span class="keyword">var</span> valueType = p.Value.Type;</span><br><span class="line">            <span class="keyword">if</span> (valueType == JTokenType.Object)</span><br><span class="line">            &#123;</span><br><span class="line">                sb.Append(<span class="string">&quot;public &quot;</span> + p.Name + <span class="string">&quot; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (valueType == JTokenType.Array)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> arr = (JArray)p.Value;</span><br><span class="line">                <span class="comment">//a.First</span></span><br><span class="line"></span><br><span class="line">                <span class="keyword">switch</span> (arr.First().Type)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Object:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public List&lt;<span class="subst">&#123;p.Name&#125;</span>&gt; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Integer:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public List&lt;int&gt; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Float:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public List&lt;float&gt; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.String:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public List&lt;string&gt; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Boolean:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public List&lt;bool&gt; &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="literal">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">switch</span> (valueType)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Integer:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public int &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Float:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public float &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.String:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public string &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> JTokenType.Boolean:</span><br><span class="line">                        sb.Append(<span class="string">$&quot;public bool &quot;</span> + p.Name + <span class="string">&quot; &#123;get;set;&#125;&quot;</span> + Environment.NewLine);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="literal">default</span>:</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        subValueToken = subValueToken.Next;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> sb.ToString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>现在有了类的定义字符串，接下来就可以动态编译成实体类</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">Write(<span class="string">&quot;Let&#x27;s compile!&quot;</span>);</span><br><span class="line">Write(<span class="string">&quot;Parsing the code into the SyntaxTree&quot;</span>);</span><br><span class="line">SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(sb.ToString());</span><br><span class="line"></span><br><span class="line"><span class="built_in">string</span> assemblyName = Path.GetRandomFileName();</span><br><span class="line"><span class="keyword">var</span> refPaths = <span class="keyword">new</span>[] &#123;</span><br><span class="line">                <span class="keyword">typeof</span>(<span class="built_in">object</span>).GetTypeInfo().Assembly.Location,</span><br><span class="line">                <span class="keyword">typeof</span>(Console).GetTypeInfo().Assembly.Location,</span><br><span class="line">                Path.Combine(Path.GetDirectoryName(<span class="keyword">typeof</span>(System.Runtime.GCSettings).GetTypeInfo().Assembly.Location), <span class="string">&quot;System.Runtime.dll&quot;</span>)</span><br><span class="line">            &#125;;</span><br><span class="line">MetadataReference[] references = refPaths.Select(r =&gt; MetadataReference.CreateFromFile(r)).ToArray();</span><br><span class="line"></span><br><span class="line">Write(<span class="string">&quot;Adding the following references&quot;</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> r <span class="keyword">in</span> refPaths)</span><br><span class="line">    Write(r);</span><br><span class="line"></span><br><span class="line">Write(<span class="string">&quot;Compiling ...&quot;</span>);</span><br><span class="line">CSharpCompilation compilation = CSharpCompilation.Create(</span><br><span class="line">    assemblyName,</span><br><span class="line">    syntaxTrees: <span class="keyword">new</span>[] &#123; syntaxTree &#125;,</span><br><span class="line">    references: references,</span><br><span class="line">    options: <span class="keyword">new</span> CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> (<span class="keyword">var</span> ms = <span class="keyword">new</span> MemoryStream())</span><br><span class="line">&#123;</span><br><span class="line">    EmitResult result = compilation.Emit(ms);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!result.Success)</span><br><span class="line">    &#123;</span><br><span class="line">        Write(<span class="string">&quot;Compilation failed!&quot;</span>);</span><br><span class="line">        IEnumerable&lt;Diagnostic&gt; failures = result.Diagnostics.Where(diagnostic =&gt;</span><br><span class="line">            diagnostic.IsWarningAsError ||</span><br><span class="line">            diagnostic.Severity == DiagnosticSeverity.Error);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">foreach</span> (Diagnostic diagnostic <span class="keyword">in</span> failures)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.Error.WriteLine(<span class="string">&quot;\t&#123;0&#125;: &#123;1&#125;&quot;</span>, diagnostic.Id, diagnostic.GetMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        Write(<span class="string">&quot;Compilation successful! Now instantiating and executing the code ...&quot;</span>);</span><br><span class="line">        ms.Seek(<span class="number">0</span>, SeekOrigin.Begin);</span><br><span class="line"></span><br><span class="line">        Assembly assembly = AssemblyLoadContext.Default.LoadFromStream(ms);</span><br><span class="line">        <span class="keyword">var</span> type = assembly.GetType(<span class="string">&quot;JsonToObject.Root&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> instance = assembly.CreateInstance(<span class="string">&quot;JsonToObject.Root&quot;</span>);</span><br><span class="line">	    <span class="comment">//反射获取静态的 DeserializeObject方法</span></span><br><span class="line">        <span class="keyword">var</span> deserializeObject = <span class="keyword">typeof</span>(JsonConvert).GetGenericMethod(<span class="string">&quot;DeserializeObject&quot;</span>, BindingFlags.Public | BindingFlags.Static, <span class="keyword">new</span> Type[] &#123; <span class="keyword">typeof</span>(<span class="built_in">string</span>), <span class="keyword">typeof</span>(JsonSerializerSettings) &#125;);</span><br><span class="line">        <span class="keyword">var</span> genericDeserializeObject = deserializeObject.MakeGenericMethod(type);</span><br><span class="line">		<span class="comment">//执行反序列化</span></span><br><span class="line">        <span class="keyword">var</span> root = genericDeserializeObject.Invoke(<span class="literal">null</span>, <span class="keyword">new</span> <span class="built_in">object</span>[] &#123; jsonString, <span class="literal">null</span> &#125;);</span><br><span class="line">        <span class="comment">//输出序列化的结果</span></span><br><span class="line">        Write(JsonConvert.SerializeObject(root, <span class="keyword">new</span> JsonSerializerSettings &#123; ContractResolver = <span class="keyword">new</span> CamelCasePropertyNamesContractResolver() &#125;));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过反射获取静态方法的扩展</p>
+<figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Extension</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MethodInfo <span class="title">GetGenericMethod</span>(<span class="params"><span class="keyword">this</span> Type targetType, <span class="built_in">string</span> name, BindingFlags flags, <span class="keyword">params</span> Type[] parameterTypes</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> methods = targetType.GetMethods(flags).Where(m =&gt; m.Name == name &amp;&amp; m.IsGenericMethod);</span><br><span class="line">        <span class="keyword">var</span> flag = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">foreach</span> (MethodInfo method <span class="keyword">in</span> methods)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> parameters = method.GetParameters();</span><br><span class="line">            <span class="keyword">if</span> (parameters.Length != parameterTypes.Length)</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; parameters.Length; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (parameters[i].ParameterType != parameterTypes[i])</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (i == parameters.Length - <span class="number">1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    flag = <span class="literal">true</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (flag)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> method;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，我们已经实现了文章开头说的将json字符串的首字母都变成小写</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文主要涉及以下的内容</p>
+<ul>
+<li><p>如何通过json字符串拼接类的定义</p>
+</li>
+<li><p>如何通过动态编译的方式动态生成类</p>
+</li>
+<li><p>反射动态调用反序列化的方法</p>
+<p>希望本文能够对大家有所帮助，完整的项目地址可以参考：<a target="_blank" rel="noopener" href="https://github.com/likeshan168/test_demo/tree/main/dynamic_demo">dynamic_demo</a>项目</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/07/ssh-nopassword/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/05/07/ssh-nopassword/" class="post-title-link" itemprop="url">ssh配置免密登录</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-07 23:05:10 / 修改时间：23:48:43" itemprop="dateCreated datePublished" datetime="2022-05-07T23:05:10+08:00">2022-05-07</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/07/ssh-nopassword/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/07/ssh-nopassword/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="免密流程"><a href="#免密流程" class="headerlink" title="免密流程"></a>免密流程</h2><p>假设有两台Linux的服务器，A(192.168.240.1)、B(192.168.240.2)，现在想通过A服务器免密登录B服务器，那么首先需要将A服务器的SSH公钥复制到B服务器的授权列表文件中（就是authorized_keys文件中）</p>
+<p><img src="/2022/05/07/ssh-nopassword/ssh%E5%85%8D%E5%AF%86%E7%99%BB%E5%BD%95.png" alt="ssh免密登录"></p>
+<h2 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h2><ol>
+<li><p>在A服务器上生成密钥：<code>ssh-keygen -t rsa</code>，都采用默认的配置，直接回车即可</p>
+</li>
+<li><p>默认生成的密钥是保存在<code>/home/sherman/.ssh</code>目录下（根据自己的情况），直接复制到B服务器上，例如：</p>
+<p><code>scp id_rsa.pub test@192.168.240.2:/home/test </code></p>
+</li>
+<li><p>在B服务器上以同样的方式生成密钥：<code>ssh-keygen -t rsa</code>，都默认回车，同样在<code>/home/test/.ssh</code> 目录下生成了私钥文件（id_rsa）和公钥文件（id_rsa_pub）</p>
+</li>
+<li><p>将A服务器的公钥添加到B服务器的&#x2F;home&#x2F;test&#x2F;.ssh&#x2F;authorized_keys文件中，如果没有就创建一个：<code>touch authorized_keys</code> 注意：authorized_keys的权限为 -rw——，就是只有test这个用户可以读写，其他的都没有权限</p>
+<p>可以通过命令设置访问权限：<code>chmod 600 authorized_keys</code></p>
+<p>cat ..&#x2F;id_rsa_pub &gt;&gt; authorized_keys</p>
+</li>
+<li><p>在A服务器上输入：<code>ssh test@192.168.240.2</code>  登录成功</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/06/maven-demo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -885,7 +1077,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

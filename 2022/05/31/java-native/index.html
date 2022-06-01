@@ -20,20 +20,25 @@
     var CONFIG = {"hostname":"likeshan168.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="创建项目创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者spring initializr，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，通过maven命令创建项目，此处不再">
+  <meta name="description" content="前言在研读《深入理解Java虚拟机》这本书时，看到Java虚拟机运行时数据区中有关本地方法栈（Native Method Stack）的概念，本地方法栈就是为调用Native方法服务的，被Native修饰的方法不是由Java语言实现的，可以是C&#x2F;C++实现，然后通过JNI（Java Native Interface）实现调用。当然也有Java虚拟机栈，是为Java方法服务的。本篇主要是想">
 <meta property="og:type" content="article">
-<meta property="og:title" content="普通Maven项目中添加springboot支持">
-<meta property="og:url" content="https://likeshan168.github.io/2022/05/13/manually-add-springboot/index.html">
+<meta property="og:title" content="Java中的native方法">
+<meta property="og:url" content="https://likeshan168.github.io/2022/05/31/java-native/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="创建项目创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者spring initializr，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，通过maven命令创建项目，此处不再">
+<meta property="og:description" content="前言在研读《深入理解Java虚拟机》这本书时，看到Java虚拟机运行时数据区中有关本地方法栈（Native Method Stack）的概念，本地方法栈就是为调用Native方法服务的，被Native修饰的方法不是由Java语言实现的，可以是C&#x2F;C++实现，然后通过JNI（Java Native Interface）实现调用。当然也有Java虚拟机栈，是为Java方法服务的。本篇主要是想">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-13T15:44:04.000Z">
-<meta property="article:modified_time" content="2022-05-16T15:55:29.934Z">
+<meta property="og:image" content="https://likeshan168.github.io/2022/05/31/java-native/image-20220531233445499.png">
+<meta property="og:image" content="https://likeshan168.github.io/2022/05/31/java-native/image-20220531233855312.png">
+<meta property="og:image" content="https://likeshan168.github.io/2022/05/31/java-native/image-20220601093337374.png">
+<meta property="og:image" content="https://likeshan168.github.io/2022/05/31/java-native/image-20220601101338011.png">
+<meta property="article:published_time" content="2022-05-31T15:13:45.000Z">
+<meta property="article:modified_time" content="2022-06-01T02:18:27.035Z">
 <meta property="article:author" content="Sherman">
 <meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://likeshan168.github.io/2022/05/31/java-native/image-20220531233445499.png">
 
-<link rel="canonical" href="https://likeshan168.github.io/2022/05/13/manually-add-springboot/">
+<link rel="canonical" href="https://likeshan168.github.io/2022/05/31/java-native/">
 
 
 <script id="page-configurations">
@@ -46,7 +51,7 @@
   };
 </script>
 
-  <title>普通Maven项目中添加springboot支持 | Blog</title>
+  <title>Java中的native方法 | Blog</title>
   
 
 
@@ -180,7 +185,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/13/manually-add-springboot/">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/31/java-native/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -193,7 +198,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          普通Maven项目中添加springboot支持
+          Java中的native方法
         </h1>
 
         <div class="post-meta">
@@ -203,14 +208,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-05-13 23:44:04" itemprop="dateCreated datePublished" datetime="2022-05-13T23:44:04+08:00">2022-05-13</time>
+              <time title="创建时间：2022-05-31 23:13:45" itemprop="dateCreated datePublished" datetime="2022-05-31T23:13:45+08:00">2022-05-31</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-16 23:55:29" itemprop="dateModified" datetime="2022-05-16T23:55:29+08:00">2022-05-16</time>
+                <time title="修改时间：2022-06-01 10:18:27" itemprop="dateModified" datetime="2022-06-01T10:18:27+08:00">2022-06-01</time>
               </span>
 
           
@@ -222,8 +227,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/05/13/manually-add-springboot/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/13/manually-add-springboot/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/05/31/java-native/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/31/java-native/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -238,20 +243,33 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a target="_blank" rel="noopener" href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a target="_blank" rel="noopener" href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
-<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加一个controller，实现一个简单的api接口</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在研读《深入理解Java虚拟机》这本书时，看到Java虚拟机运行时数据区中有关本地方法栈（Native Method Stack）的概念，本地方法栈就是为调用Native方法服务的，被Native修饰的方法不是由Java语言实现的，可以是C&#x2F;C++实现，然后通过JNI（Java Native Interface）实现调用。当然也有Java虚拟机栈，是为Java方法服务的。本篇主要是想熟悉怎么样去调用Native方法。</p>
+<h2 id="通过JNI调用C-方法"><a href="#通过JNI调用C-方法" class="headerlink" title="通过JNI调用C++方法"></a>通过JNI调用C++方法</h2><ul>
+<li><p>通过java代码调用C++的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.load(<span class="string">&quot;E:&quot;</span> + File.separator + <span class="string">&quot;test.dll&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">TestOne</span><span class="params">()</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        TestOne();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>javac Main.java</code>编译生成Main.class文件，然后执行<code>javah Main</code>会生成Main.h文件，目的就是为指定的类中的Native方式生成.h文件</p>
+</li>
+<li><p>通过visual studio 2022创建一个C++的项目test，生成的dll名称需要和上述Java代码中加载的类库名称要一致</p>
+<p><img src="/2022/05/31/java-native/image-20220531233445499.png" alt="image-20220531233445499"></p>
+</li>
+<li><p>将上面生成的Main.h，以及%JAVA_HOME&#x2F;include&#x2F;jni.h%和%JAVA_HOME&#x2F;include&#x2F;win32&#x2F;jni_md.h%，三个文件复制到test目录下，如图所示：</p>
+<p><img src="/2022/05/31/java-native/image-20220531233855312.png" alt="image-20220531233855312"></p>
+</li>
+<li><p>将上面三个文件添加到头文件中</p>
+<p><img src="/2022/05/31/java-native/image-20220601093337374.png" alt="image-20220601093337374"></p>
+</li>
+<li><p>修改一下Main.h中的<code>#include &lt;jni.h&gt;</code>改成<code>#include &quot;jni.h&quot;</code></p>
+</li>
+<li><p>添加C++源文件Hello.cpp并添加如下的内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include <span class="string">&quot;pch.h&quot;</span></span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include <span class="string">&quot;Main.h&quot;</span></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">JNIEXPORT <span class="keyword">void</span> JNICALL <span class="title function_">Java_Main_TestOne</span></span><br><span class="line"><span class="params">(JNIEnv*, jclass)</span></span><br><span class="line">&#123;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;hello sherman&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成项目，复制test.dll，到E:\下(我这里是64位)</p>
+<p><img src="/2022/05/31/java-native/image-20220601101338011.png" alt="image-20220601101338011"></p>
+</li>
+<li><p>直接运行java程序可以看到输出结果：”hello sherman”</p>
+</li>
+</ul>
 
     </div>
 
@@ -290,13 +308,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/13/java-string-stringbuilder/" rel="prev" title="java中String、StringBuffer、StringBuilder之前的区别">
-      <i class="fa fa-chevron-left"></i> java中String、StringBuffer、StringBuilder之前的区别
+    <a href="/2022/05/29/reader-resources/" rel="prev" title="几种获取resources目录下的文件方式">
+      <i class="fa fa-chevron-left"></i> 几种获取resources目录下的文件方式
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/05/15/spring-console/" rel="next" title="java控制台程序添加springboot支持">
-      java控制台程序添加springboot支持 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -356,7 +371,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E4%BE%9D%E8%B5%96"><span class="nav-number">2.</span> <span class="nav-text">添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E9%AA%8C%E8%AF%81"><span class="nav-number">3.</span> <span class="nav-text">测试验证</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87JNI%E8%B0%83%E7%94%A8C-%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">通过JNI调用C++方法</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

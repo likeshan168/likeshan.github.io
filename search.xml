@@ -257,6 +257,41 @@
       </tags>
   </entry>
   <entry>
+    <title>Java中的native方法</title>
+    <url>/2022/05/31/java-native/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在研读《深入理解Java虚拟机》这本书时，看到Java虚拟机运行时数据区中有关本地方法栈（Native Method Stack）的概念，本地方法栈就是为调用Native方法服务的，被Native修饰的方法不是由Java语言实现的，可以是C&#x2F;C++实现，然后通过JNI（Java Native Interface）实现调用。当然也有Java虚拟机栈，是为Java方法服务的。本篇主要是想熟悉怎么样去调用Native方法。</p>
+<h2 id="通过JNI调用C-方法"><a href="#通过JNI调用C-方法" class="headerlink" title="通过JNI调用C++方法"></a>通过JNI调用C++方法</h2><ul>
+<li><p>通过java代码调用C++的方法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.load(<span class="string">&quot;E:&quot;</span> + File.separator + <span class="string">&quot;test.dll&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">TestOne</span><span class="params">()</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        TestOne();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过<code>javac Main.java</code>编译生成Main.class文件，然后执行<code>javah Main</code>会生成Main.h文件，目的就是为指定的类中的Native方式生成.h文件</p>
+</li>
+<li><p>通过visual studio 2022创建一个C++的项目test，生成的dll名称需要和上述Java代码中加载的类库名称要一致</p>
+<p><img src="/2022/05/31/java-native/image-20220531233445499.png" alt="image-20220531233445499"></p>
+</li>
+<li><p>将上面生成的Main.h，以及%JAVA_HOME&#x2F;include&#x2F;jni.h%和%JAVA_HOME&#x2F;include&#x2F;win32&#x2F;jni_md.h%，三个文件复制到test目录下，如图所示：</p>
+<p><img src="/2022/05/31/java-native/image-20220531233855312.png" alt="image-20220531233855312"></p>
+</li>
+<li><p>将上面三个文件添加到头文件中</p>
+<p><img src="/2022/05/31/java-native/image-20220601093337374.png" alt="image-20220601093337374"></p>
+</li>
+<li><p>修改一下Main.h中的<code>#include &lt;jni.h&gt;</code>改成<code>#include &quot;jni.h&quot;</code></p>
+</li>
+<li><p>添加C++源文件Hello.cpp并添加如下的内容</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">#include <span class="string">&quot;pch.h&quot;</span></span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include <span class="string">&quot;Main.h&quot;</span></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">JNIEXPORT <span class="keyword">void</span> JNICALL <span class="title function_">Java_Main_TestOne</span></span><br><span class="line"><span class="params">(JNIEnv*, jclass)</span></span><br><span class="line">&#123;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;hello sherman&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成项目，复制test.dll，到E:\下(我这里是64位)</p>
+<p><img src="/2022/05/31/java-native/image-20220601101338011.png" alt="image-20220601101338011"></p>
+</li>
+<li><p>直接运行java程序可以看到输出结果：”hello sherman”</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>java中String、StringBuffer、StringBuilder之前的区别</title>
     <url>/2022/05/13/java-string-stringbuilder/</url>
     <content><![CDATA[<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><p>String、StringBuffer、StringBuilder都可以应用于字符串的处理，但是在内部实现上还是有区别的。</p>
@@ -276,6 +311,28 @@
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.sherman.service.StringTestService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.CommandLineRunner;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Hello world!</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">App</span> <span class="keyword">implements</span> <span class="title class_">CommandLineRunner</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> StringTestService stringTestService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">( String[] args )</span></span><br><span class="line">    &#123;</span><br><span class="line">        SpringApplication.run(App.class, args);</span><br><span class="line">        System.out.println( <span class="string">&quot;Hello World!&quot;</span> );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;程序的真正入口地址&quot;</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">loop</span> <span class="operator">=</span> <span class="number">1000000</span>;</span><br><span class="line">        stringTestService.testString(loop);</span><br><span class="line">        stringTestService.testStringBuffer(loop);</span><br><span class="line">        stringTestService.testStringBuilder(loop);</span><br><span class="line">        stringTestService.testStringBufferBySpecifiedCapacity(loop);</span><br><span class="line">        stringTestService.testStringBuilderBySpecifiedCapacity(loop);&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>程序的执行结果如下：</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>普通Maven项目中添加springboot支持</title>
+    <url>/2022/05/13/manually-add-springboot/</url>
+    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
+<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加一个controller，实现一个简单的api接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -315,28 +372,6 @@
 </ul>
 </li>
 </ul>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>普通Maven项目中添加springboot支持</title>
-    <url>/2022/05/13/manually-add-springboot/</url>
-    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
-<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加一个controller，实现一个简单的api接口</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -412,6 +447,47 @@
 <p>运行程序之后，可以看到如下的输出：</p>
 <p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
 <p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>几种获取resources目录下的文件方式</title>
+    <url>/2022/05/29/reader-resources/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>一般我们的配置信息默认都是会配置在&#x2F;src&#x2F;main&#x2F;resources&#x2F;application.properties(或者application.yml)文件中，当然，也可以在resources文件夹下添加自己的配置文件，甚至子目录中添加自己的配置文件，那么我们又该如何读取自己添加的配置文件中的内容呢？</p>
+<h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><p>我们先定义一个公共的输出配置信息的方法如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">getProperties</span><span class="params">(InputStream inputStream)</span> &#123;</span><br><span class="line">        <span class="type">Properties</span> <span class="variable">properties</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Properties</span>();</span><br><span class="line">        <span class="keyword">if</span> (inputStream == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            properties.load(inputStream);</span><br><span class="line">            properties.list(System.out);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                inputStream.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里是通过java.util下的Properties类来获取配置文件中的属性</p>
+<p>添加自定义的配置文件，在resources目录下添加子目录config并添加配置文件db.properties</p>
+<p><img src="/2022/05/29/reader-resources/image-20220530225539228.png" alt="image-20220530225539228"></p>
+<p>内容如下：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">jdbc.driver</span>=<span class="string">com.mysql.cj.jdbc.Driver</span></span><br></pre></td></tr></table></figure>
+
+<p>在java中，resources文件夹下的文件在编译后，都是为根目录（classpath）。接下来，准备采用以下的6种方式进行配置内容的读取</p>
+<h2 id="六种方式"><a href="#六种方式" class="headerlink" title="六种方式"></a>六种方式</h2><h3 id="方法一"><a href="#方法一" class="headerlink" title="方法一"></a>方法一</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">URL</span> <span class="variable">path</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass().getClassLoader().getResource(<span class="string">&quot;config/db.properties&quot;</span>); <span class="comment">// 注意路径不带/开头</span></span><br><span class="line">getProperties(path.openStream());</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法二"><a href="#方法二" class="headerlink" title="方法二"></a>方法二</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">URL</span> <span class="variable">path</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass().getResource(<span class="string">&quot;/config/db.properties&quot;</span>); <span class="comment">//路径需要以/开头</span></span><br><span class="line">getProperties(path.openStream());</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法三"><a href="#方法三" class="headerlink" title="方法三"></a>方法三</h3><p>在springboot项目我还可以使用如下的方式：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass().getClassLoader().getResourceAsStream(<span class="string">&quot;config/db.properties&quot;</span>);<span class="comment">//与方法一类似，只不过直接返回了InputStream类型</span></span><br><span class="line">getProperties(inputStream);</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法四"><a href="#方法四" class="headerlink" title="方法四"></a>方法四</h3><p>springboot项目中使用</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">inputStream = <span class="built_in">this</span>.getClass().getResourceAsStream(<span class="string">&quot;/config/db.properties&quot;</span>);<span class="comment">//与方法二类似，只不过返回了InputStream类型了</span></span><br><span class="line">getProperties(inputStream);</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法五"><a href="#方法五" class="headerlink" title="方法五"></a>方法五</h3><p>springboot项目中使用</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ClassPathResource</span> <span class="variable">classPathResource</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ClassPathResource</span>(<span class="string">&quot;config/db.properties&quot;</span>);</span><br><span class="line">getProperties(classPathResource.getInputStream());</span><br></pre></td></tr></table></figure>
+
+<h3 id="方法六"><a href="#方法六" class="headerlink" title="方法六"></a>方法六</h3><p>springboot项目中使用，通过@Value注解，但是我们还需要通过@PropertySource(“classpath:config&#x2F;db.properties”)</p>
+<p>注解指定配置文件的路径，如果是默认的配置文件，如：application.properties(.yml)就不需要指定路径</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@PropertySource(&quot;classpath:config/db.properties&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">App</span> <span class="keyword">implements</span> <span class="title class_">CommandLineRunner</span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Value(&quot;$&#123;jdbc.driver&#125;&quot;)</span></span><br><span class="line"><span class="keyword">private</span> String driver;</span><br></pre></td></tr></table></figure>
+
+<p>通过上述6种方法都可以成功获取到自定义配置文件中的配置信息，如果大家还有更好的方式，可以评论区留言。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
