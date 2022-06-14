@@ -20,28 +20,22 @@
     var CONFIG = {"hostname":"likeshan168.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Hexo环境搭建 Node.js (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本) Git 安装hexo: npm install -g hexo-cli  完成上述操作之后，我们就可以通过hexo 命令创建项目 123hexo init hexo_blogcd hexo_blognpm install  创建完成之后，可以看到我们的目录结构如下：  其">
+  <meta name="description" content="前言windows系统的linux，在每一次启动的时候ip总是变动，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以通过启动linux系统的时候就讲ip地址，绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。 编写脚本编写shell脚本：modify_hosts.sh 1234567891011121314151617181">
 <meta property="og:type" content="article">
-<meta property="og:title" content="如何通过hexo+github pages搭建博客系统">
-<meta property="og:url" content="https://likeshan168.github.io/2022/04/23/hexo-github/index.html">
+<meta property="og:title" content="windows下的linux系统ip自动绑定在hosts文件中">
+<meta property="og:url" content="https://likeshan168.github.io/2022/06/14/windows-linux-ip/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Hexo环境搭建 Node.js (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本) Git 安装hexo: npm install -g hexo-cli  完成上述操作之后，我们就可以通过hexo 命令创建项目 123hexo init hexo_blogcd hexo_blognpm install  创建完成之后，可以看到我们的目录结构如下：  其">
+<meta property="og:description" content="前言windows系统的linux，在每一次启动的时候ip总是变动，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以通过启动linux系统的时候就讲ip地址，绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。 编写脚本编写shell脚本：modify_hosts.sh 1234567891011121314151617181">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423232811690.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423233207440.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423233657056.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423234906951.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423235637325.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423235848764.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423235939551.png">
-<meta property="article:published_time" content="2022-04-23T15:00:28.000Z">
-<meta property="article:modified_time" content="2022-04-25T01:49:08.064Z">
+<meta property="og:image" content="https://likeshan168.github.io/2022/06/14/windows-linux-ip/image-20220614165923164.png">
+<meta property="article:published_time" content="2022-06-14T08:28:53.000Z">
+<meta property="article:modified_time" content="2022-06-14T08:59:40.180Z">
 <meta property="article:author" content="Sherman">
 <meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://likeshan168.github.io/2022/04/23/hexo-github/image-20220423232811690.png">
+<meta name="twitter:image" content="https://likeshan168.github.io/2022/06/14/windows-linux-ip/image-20220614165923164.png">
 
-<link rel="canonical" href="https://likeshan168.github.io/2022/04/23/hexo-github/">
+<link rel="canonical" href="https://likeshan168.github.io/2022/06/14/windows-linux-ip/">
 
 
 <script id="page-configurations">
@@ -54,7 +48,7 @@
   };
 </script>
 
-  <title>如何通过hexo+github pages搭建博客系统 | Blog</title>
+  <title>windows下的linux系统ip自动绑定在hosts文件中 | Blog</title>
   
 
 
@@ -188,7 +182,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/23/hexo-github/">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/06/14/windows-linux-ip/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -201,7 +195,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          如何通过hexo+github pages搭建博客系统
+          windows下的linux系统ip自动绑定在hosts文件中
         </h1>
 
         <div class="post-meta">
@@ -210,16 +204,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-04-23 23:00:28" itemprop="dateCreated datePublished" datetime="2022-04-23T23:00:28+08:00">2022-04-23</time>
+              <time title="创建时间：2022-06-14 16:28:53 / 修改时间：16:59:40" itemprop="dateCreated datePublished" datetime="2022-06-14T16:28:53+08:00">2022-06-14</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-04-25 09:49:08" itemprop="dateModified" datetime="2022-04-25T09:49:08+08:00">2022-04-25</time>
-              </span>
 
           
   
@@ -230,8 +218,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/04/23/hexo-github/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/23/hexo-github/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/06/14/windows-linux-ip/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/14/windows-linux-ip/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -246,57 +234,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="Hexo环境搭建"><a href="#Hexo环境搭建" class="headerlink" title="Hexo环境搭建"></a>Hexo环境搭建</h2><ul>
-<li><a target="_blank" rel="noopener" href="http://nodejs.org/">Node.js</a> (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本)</li>
-<li><a target="_blank" rel="noopener" href="http://git-scm.com/">Git</a></li>
-<li>安装hexo: npm install -g hexo-cli</li>
-</ul>
-<p>完成上述操作之后，我们就可以通过hexo 命令创建项目</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init hexo_blog</span><br><span class="line">cd hexo_blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>windows系统的linux，在每一次启动的时候ip总是变动，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以通过启动linux系统的时候就讲ip地址，绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。</p>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>编写shell脚本：modify_hosts.sh</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">params[1]=$1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get ip address</span></span><br><span class="line">ip_addr=$(ip addr|grep eth0|grep inet|awk &#x27;&#123;print $2&#125;&#x27;|cut -d / -f 1)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifconfig eth0|sed -n <span class="string">&#x27;2p&#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> <span class="comment">#该命令获取ip地址更为简洁</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">判断参数是否为空</span></span><br><span class="line">if [ -z $&#123;params[1]&#125; ]</span><br><span class="line">then</span><br><span class="line">        #为空，则获取系统的名称</span><br><span class="line">        sys_name=$(cat /etc/lsb-release|grep ID|cut -d = -f 2)</span><br><span class="line">else</span><br><span class="line">        #不为空，则取第一个参数名</span><br><span class="line">        sys_name=$&#123;params[1]&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">host_name=$sys_name&quot;.wsl&quot;</span><br><span class="line"></span><br><span class="line">win_host_path=/mnt/c/Windows/System32/drivers/etc/HOSTS</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">获取行号</span></span><br><span class="line">line_no=$(nl -b a $win_host_path|grep $host_name|awk &#x27;&#123;print $1&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">for line in $line_no</span><br><span class="line">do</span><br><span class="line">        #删除该行的内容</span><br><span class="line">        sed -i $line&#x27;d&#x27; $win_host_path</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">追加ip的映射</span></span><br><span class="line">echo $ip_addr&#x27; &#x27;$host_name &gt;&gt; $win_host_path</span><br><span class="line"></span><br><span class="line">[ -f &quot;$win_host_path&quot; ] &amp;&amp; echo &quot;windows host:&quot;$(nl $win_host_path|grep $host_name) &amp;&amp; echo &#x27;linux ip addr:&#x27;$ip_addr</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
 
-<p>创建完成之后，可以看到我们的目录结构如下：</p>
-<p><img src="/2022/04/23/hexo-github/image-20220423232811690.png" alt="image-20220423232811690"></p>
-<p>其中_config.yml是网站的配置文件，关于各个文件夹是用来做什么的，可以参考<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/setup">hexo</a>官方文档，其中有比较详细的介绍。接下，我们通过如下的命令运行该项目：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g //生成静态文件</span><br><span class="line">hexo s //启动服务</span><br></pre></td></tr></table></figure>
+<h2 id="自动执行"><a href="#自动执行" class="headerlink" title="自动执行"></a>自动执行</h2><p>为了能让脚本自动每次启动的时候自动运行，可以修改~&#x2F;.bashrc文件，并在最后添加如下代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">bash /root/shell_scripts/modify_host.sh myubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下面的代码是想每次启动的时候确保mysql服务也启动了</span></span><br><span class="line">service mysql status|grep -w stopped</span><br><span class="line">if [ $? -eq 0 ]</span><br><span class="line">then</span><br><span class="line">        service mysql start</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 
-<p><img src="/2022/04/23/hexo-github/image-20220423233207440.png" alt="image-20220423233207440"></p>
-<p>服务已经成功启动，由于，默认的4000端口已经被占用，我就通过  hexo s -p 5000 指定了端口，然后在浏览器中输入：<a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000</a> 可以看到运行的结果。</p>
-<h2 id="github-pages"><a href="#github-pages" class="headerlink" title="github pages"></a>github pages</h2><p>首先得要有GitHub的账号，然后创建一个项目</p>
-<p><img src="/2022/04/23/hexo-github/image-20220423233657056.png" alt="image-20220423233657056"></p>
-<p>创建完成之后，我们就可以通过<a target="_blank" rel="noopener" href="https://likeshan168.com.cn进行访问,现在由于没有内容,所以会提示404,接下来我们就将hexo_blog发布到github上/">https://likeshan168.com.cn进行访问，现在由于没有内容，所以会提示404，接下来我们就将hexo_blog发布到GitHub上</a></p>
-<h2 id="发布到GitHub"><a href="#发布到GitHub" class="headerlink" title="发布到GitHub"></a>发布到GitHub</h2><ul>
-<li><p>安装<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>：npm install hexo-deployer-git –save</p>
-</li>
-<li><p>修改_config.yml文件的deploy配置：</p>
-</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repository:</span> <span class="string">https://github.com/likeshan168/likeshan168.com.cn.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p>运行hexo clean &amp;&amp; hexo d</p>
-</li>
-<li><p>设置一下likeshan168.com.cn项目Pages中的开发分支（这里指定的分支名称就是_config.yml中deploy指定的分支名称）</p>
-<p><img src="/2022/04/23/hexo-github/image-20220423234906951.png" alt="image-20220423234906951"></p>
-</li>
-<li><p>访问<a target="_blank" rel="noopener" href="https://likeshan168.com.cn,看是否部署成功/">https://likeshan168.com.cn，看是否部署成功</a></p>
-</li>
-</ul>
-<p>如果在本地访问没有问题，部署到github pages查看样式都不对的话，修改_config.yml文件中的url&#x3D;<a target="_blank" rel="noopener" href="https://likeshan168.com.cn/(%E6%94%B9%E6%88%90%E4%BD%A0%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80)">https://likeshan168.com.cn/(改成你自己项目的地址)</a></p>
-<h2 id="创建新页面"><a href="#创建新页面" class="headerlink" title="创建新页面"></a>创建新页面</h2><p>创建一个about me的页面：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page --path about/me &quot;About me&quot;</span><br></pre></td></tr></table></figure>
-
-<p>执行完命令之后就能看到在source目录下创建了about目录，about目录下多了me.md文件：<br><img src="/2022/04/23/hexo-github/image-20220423235637325.png" alt="image-20220423235637325"></p>
-<p>添加菜单：</p>
-<p><img src="/2022/04/23/hexo-github/image-20220423235848764.png" alt="image-20220423235848764"></p>
-<p>重新生成一下静态文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
-
-<p>可以看到About的菜单生成了</p>
-<p><img src="/2022/04/23/hexo-github/image-20220423235939551.png" alt="image-20220423235939551"></p>
-<p>最后，将我们的修改推送到GitHub上即可</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-
-<p>刷新<a target="_blank" rel="noopener" href="https://likeshan168.com.cn就可以看到我们的更新,至此,通过hexo+github/">https://likeshan168.com.cn就可以看到我们的更新，至此，通过hexo+github</a> pages进行博客系统的搭建基本已经讲完，关于hexo比较详细的操作流程，还需参考官网，谢谢。</p>
+<p>这样，只需要在windows下使用myubuntu.wsl域名就能连接到linux的服务器</p>
+<p><img src="/2022/06/14/windows-linux-ip/image-20220614165923164.png" alt="image-20220614165923164"></p>
 
     </div>
 
@@ -334,11 +280,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2022/04/25/hexo-image/" rel="next" title="hexo+typora+github图片路径问题">
-      hexo+typora+github图片路径问题 <i class="fa fa-chevron-right"></i>
+    <a href="/2022/06/03/install-mysql/" rel="prev" title="忘记mysql的root密码">
+      <i class="fa fa-chevron-left"></i> 忘记mysql的root密码
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -398,7 +344,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hexo%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">Hexo环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#github-pages"><span class="nav-number">2.</span> <span class="nav-text">github pages</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E5%88%B0GitHub"><span class="nav-number">3.</span> <span class="nav-text">发布到GitHub</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E9%A1%B5%E9%9D%A2"><span class="nav-number">4.</span> <span class="nav-text">创建新页面</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%84%9A%E6%9C%AC"><span class="nav-number">2.</span> <span class="nav-text">编写脚本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%89%A7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">自动执行</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

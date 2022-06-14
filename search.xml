@@ -34,33 +34,6 @@
       </tags>
   </entry>
   <entry>
-    <title>openjdk编译</title>
-    <url>/2022/05/24/compile-openjdk/</url>
-    <content><![CDATA[<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
-<p>然后点击zip格式，下载压缩包的文件：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
-
-<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
-
-<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
-
-<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
-<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>深入理解Java虚拟机</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>如何通过hexo+github pages搭建博客系统</title>
     <url>/2022/04/23/hexo-github/</url>
     <content><![CDATA[<h2 id="Hexo环境搭建"><a href="#Hexo环境搭建" class="headerlink" title="Hexo环境搭建"></a>Hexo环境搭建</h2><ul>
@@ -120,6 +93,33 @@
       </tags>
   </entry>
   <entry>
+    <title>openjdk编译</title>
+    <url>/2022/05/24/compile-openjdk/</url>
+    <content><![CDATA[<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
+<p>然后点击zip格式，下载压缩包的文件：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
+
+<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
+
+<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
+<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>深入理解Java虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo+typora+github图片路径问题</title>
     <url>/2022/04/25/hexo-image/</url>
     <content><![CDATA[<p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
@@ -161,6 +161,38 @@
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 
 <p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>忘记mysql的root密码</title>
+    <url>/2022/06/03/install-mysql/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>最近在windows系统下安装了一个Ubuntu18.04.5的Linux系统，然后直接使用Ubuntu包管理工具装了MySql数据库，装的过程中没有提示任何有关root密码的信息（也许是我没有仔细观察，这不重要），这就需要能通过某种方式可以找到MySql的初始密码，或者修改原有的root密码。</p>
+<h2 id="安装MySql"><a href="#安装MySql" class="headerlink" title="安装MySql"></a>安装MySql</h2><p>可以先通过<code>sudo apt search mysql-server</code>看看包源提供了那些MySql的版本</p>
+<p><img src="/2022/06/03/install-mysql/image-20220603224711038.png" alt="image-20220603224711038"></p>
+<p>执行：<code>sudo apt install mysql-server</code>等待安装完成，查看服务的状态：<code>sudo service mysql status</code>发现服务未启动，执行命令<code>sudo service mysql start</code>启动MySql服务，查看MySql的服务状态已经启动，如果在启动的过程中发现如下的错误信息：mkdir: cannot create directory ‘&#x2F;&#x2F;.cache’: Permission denied，可以通过命令<code>sudo cat /etc/passwd</code>查看MySql用户的相关信息如下：</p>
+<p><img src="/2022/06/03/install-mysql/image-20220603225158252.png" alt="image-20220603225158252"></p>
+<p>说明MySql用户的home目录不存在，需要将其改成如下：</p>
+<p><img src="/2022/06/03/install-mysql/image-20220603225255353.png" alt="image-20220603225255353"></p>
+<p>修改完成之后重新启动MySql服务<code>sudo service mysql restart</code>，错误消失，服务也正常启动了，接下就该登录MySql服务器，看看相关的数据库和表了，但是由于不知道root的密码，也就没有办法登录了</p>
+<h2 id="修改密码"><a href="#修改密码" class="headerlink" title="修改密码"></a>修改密码</h2><ul>
+<li><p>修改 &#x2F;etc&#x2F;mysql&#x2F;mysql.conf.d&#x2F;mysqld.cnf文件，在[mysqld]下面添加一行代码：<code>skip-grant-tables=1</code></p>
+<p><img src="/2022/06/03/install-mysql/image-20220603225818282.png" alt="image-20220603225818282"></p>
+</li>
+<li><p>重启启动MySql服务：<code>sudo service mysql restart</code></p>
+</li>
+<li><p>登录MySql：mysql -u root -p(不需要输入密码，直接enter进入)</p>
+</li>
+<li><p>执行语句：<code>alter user &#39;root&#39;@&#39;localhost&#39; IDENTIFIED WITH my_native_password BY &#39;123456&#39;;</code>，可能会提示：he MySQL server is running with the –skip-grant-tables option so it cannot execute this statement的错误信息，执行<code>flush privileges;</code>即可</p>
+</li>
+<li><p>退出，将文件&#x2F;etc&#x2F;mysql&#x2F;mysql.conf.d&#x2F;mysqld.cnf中<code>skip-grant-tables=1</code>删除或者注释掉，重启MySql服务</p>
+</li>
+<li><p>重新登录MySql：mysql -u root -p 输入密码：123456，就可以正常登录了</p>
+</li>
+</ul>
+<p>至此，root的密码也就修改成功了。在初始化安装的时候，会有一个初始化的密码，也可以通过查看<code>/var/log/mysqld.log</code>文件的记录能查到初始的root密码，<code>sudo grep &#39;temporary password&#39; /var/log/mysqld.log</code>，但是我执行了该命令，发现文件&#x2F;var&#x2F;log&#x2F;mysqld.log不存在，估计是我的环境问题，如果大家也有遇到这种情况，可以参考一下，或许有点帮助。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -317,28 +349,6 @@
       </tags>
   </entry>
   <entry>
-    <title>普通Maven项目中添加springboot支持</title>
-    <url>/2022/05/13/manually-add-springboot/</url>
-    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
-<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>添加一个controller，实现一个简单的api接口</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>json转换成C#类</title>
     <url>/2022/05/11/json-to-object/</url>
     <content><![CDATA[<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>最近碰到一个问题，就是想把json字符串中的字段名称都改成首字母小写，当然这个json是非常大的，手动改不理智，那有没有什么办法通过什么方式直接将json字符串的首字母都改成小写的呢？一开始是想通过Newtonsoft.Json.dll这个类库，直接反序列化为动态的类(dynamic)，然后重新序列化成json字符串时指定：<code>ContractResolver = new CamelCasePropertyNamesContractResolver()</code>，但是还是行不通。如果我们有事先定义好的实体类，再序列化的时候通过上面的设置是可以输出首字母小写的json字符串，基于这个考虑，是否可以通过原json字符串动态生成实体类，再通过反序列化成该实体类，最后把得到的对象再序列化成json字符串，是否可达目的呢。请往下看。</p>
@@ -372,6 +382,28 @@
 </ul>
 </li>
 </ul>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>普通Maven项目中添加springboot支持</title>
+    <url>/2022/05/13/manually-add-springboot/</url>
+    <content><![CDATA[<h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><p>创建springboot项目有很多种方式，可以通过IDE（idea、eclipse等）工具，或者<a href="https://start.spring.io/">spring initializr</a>，但是本文的重点是通过创建一个普通的maven项目，然后通过添加springboot的相关依赖去构建springboot项目，主要是为了让自己对springboot项目有一个大致的了解。创建maven项目可以参考我之前的文章，<a href="https://www.toutiao.com/article/7094642417542087176/?log_from=631fee930fa56_1652456805449">通过maven命令创建项目</a>，此处不再详细描述</p>
+<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><p>在pom.xml文件加入以下内容</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.6.7<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这就是Spring Boot的父级依赖，加入之后项目就变成了Spring Boot项目。<code>spring-boot-starter-parent</code>是一个特殊的starter，它用来提供相关的maven默认依赖。之后再引入。其他的依赖时，可以不用指定version标签。接下我们引入web应用相关的依赖。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="测试验证"><a href="#测试验证" class="headerlink" title="测试验证"></a>测试验证</h2><p>修改main方法，加入@SpringBootApplication注解</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SpringBootDmeo</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(SpringBootDmeo.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加一个controller，实现一个简单的api接口</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.sherman.demo.SpringBoot.Controllers;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HelloWorldController</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sayHello</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将程序运行起来，在浏览器中输入localhost:8080(默认端口：8080)，可以看到输出接口：Hello World，至此，springboot项目已经成功运行起来了。</p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
@@ -665,6 +697,23 @@
 <p><img src="/2022/05/04/volatile/volatile_2.png" alt="volatile_2"></p>
 <p>通过差异发现，加了<code>volatile</code>关键字的，直接比较的是地址指向的内容，用的都是最新的值，而没有加关键字的则是：首先通过movzx指令，将地址指向的内容放入到了ecx寄存器中，后面一直比较的也是ecx寄存器中的值，没有拿到最新的值。这样导致的结果就是我们上面程序运行的结果，循环一直不能结束。</p>
 <p>结论：如果存在多线程访问上述类型的字段的话，保险的方式就是通过volatile关键字进行修饰，告诉编译器不需要对该字段进行优化，从而可以每次都能获取到最新的值</p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>windows下的linux系统ip自动绑定在hosts文件中</title>
+    <url>/2022/06/14/windows-linux-ip/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>windows系统的linux，在每一次启动的时候ip总是变动，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以通过启动linux系统的时候就讲ip地址，绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。</p>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>编写shell脚本：modify_hosts.sh</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">params[1]=$1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get ip address</span></span><br><span class="line">ip_addr=$(ip addr|grep eth0|grep inet|awk &#x27;&#123;print $2&#125;&#x27;|cut -d / -f 1)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifconfig eth0|sed -n <span class="string">&#x27;2p&#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> <span class="comment">#该命令获取ip地址更为简洁</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">判断参数是否为空</span></span><br><span class="line">if [ -z $&#123;params[1]&#125; ]</span><br><span class="line">then</span><br><span class="line">        #为空，则获取系统的名称</span><br><span class="line">        sys_name=$(cat /etc/lsb-release|grep ID|cut -d = -f 2)</span><br><span class="line">else</span><br><span class="line">        #不为空，则取第一个参数名</span><br><span class="line">        sys_name=$&#123;params[1]&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">host_name=$sys_name&quot;.wsl&quot;</span><br><span class="line"></span><br><span class="line">win_host_path=/mnt/c/Windows/System32/drivers/etc/HOSTS</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">获取行号</span></span><br><span class="line">line_no=$(nl -b a $win_host_path|grep $host_name|awk &#x27;&#123;print $1&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">for line in $line_no</span><br><span class="line">do</span><br><span class="line">        #删除该行的内容</span><br><span class="line">        sed -i $line&#x27;d&#x27; $win_host_path</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">追加ip的映射</span></span><br><span class="line">echo $ip_addr&#x27; &#x27;$host_name &gt;&gt; $win_host_path</span><br><span class="line"></span><br><span class="line">[ -f &quot;$win_host_path&quot; ] &amp;&amp; echo &quot;windows host:&quot;$(nl $win_host_path|grep $host_name) &amp;&amp; echo &#x27;linux ip addr:&#x27;$ip_addr</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动执行"><a href="#自动执行" class="headerlink" title="自动执行"></a>自动执行</h2><p>为了能让脚本自动每次启动的时候自动运行，可以修改~&#x2F;.bashrc文件，并在最后添加如下代码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bash /root/shell_scripts/modify_host.sh myubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下面的代码是想每次启动的时候确保mysql服务也启动了</span></span><br><span class="line">service mysql status|grep -w stopped</span><br><span class="line">if [ $? -eq 0 ]</span><br><span class="line">then</span><br><span class="line">        service mysql start</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>这样，只需要在windows下使用myubuntu.wsl域名就能连接到linux的服务器</p>
+<p><img src="/2022/06/14/windows-linux-ip/image-20220614165923164.png" alt="image-20220614165923164"></p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
