@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>openjdk编译</title>
+    <url>/2022/05/24/compile-openjdk/</url>
+    <content><![CDATA[<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
+<p>然后点击zip格式，下载压缩包的文件：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
+
+<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
+
+<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
+
+<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
+<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
+<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
+<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>深入理解Java虚拟机</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java中获取执行时间的几种方式</title>
     <url>/2022/05/16/calculate-time/</url>
     <content><![CDATA[<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>有的时候，我们需要查看某一段代码的性能如何，最为简单的方式，可以通过计算该段代码执行的耗时，来进行简单的判断，那么我们在java中可以通过以下几种方式获取程序的执行耗时。</p>
@@ -90,33 +117,6 @@
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>openjdk编译</title>
-    <url>/2022/05/24/compile-openjdk/</url>
-    <content><![CDATA[<h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
-<p>然后点击zip格式，下载压缩包的文件：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
-
-<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
-
-<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
-
-<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
-<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>深入理解Java虚拟机</tag>
       </tags>
   </entry>
   <entry>
@@ -658,6 +658,23 @@
       </tags>
   </entry>
   <entry>
+    <title>windows下的linux系统ip自动绑定在hosts文件中</title>
+    <url>/2022/06/14/windows-linux-ip/</url>
+    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>windows系统的linux，在每一次启动的时候ip总是变动的，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以在启动linux系统的时候就将ip地址绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。</p>
+<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>编写shell脚本：modify_hosts.sh</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">params[1]=$1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get ip address</span></span><br><span class="line">ip_addr=$(ip addr|grep eth0|grep inet|awk &#x27;&#123;print $2&#125;&#x27;|cut -d / -f 1)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifconfig eth0|sed -n <span class="string">&#x27;2p&#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> <span class="comment">#该命令获取ip地址更为简洁</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">判断参数是否为空</span></span><br><span class="line">if [ -z $&#123;params[1]&#125; ]</span><br><span class="line">then</span><br><span class="line">        #为空，则获取系统的名称</span><br><span class="line">        sys_name=$(cat /etc/lsb-release|grep ID|cut -d = -f 2)</span><br><span class="line">else</span><br><span class="line">        #不为空，则取第一个参数名</span><br><span class="line">        sys_name=$&#123;params[1]&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">host_name=$sys_name&quot;.wsl&quot;</span><br><span class="line"></span><br><span class="line">win_host_path=/mnt/c/Windows/System32/drivers/etc/HOSTS</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">获取行号</span></span><br><span class="line">line_no=$(nl -b a $win_host_path|grep $host_name|awk &#x27;&#123;print $1&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">for line in $line_no</span><br><span class="line">do</span><br><span class="line">        #删除该行的内容</span><br><span class="line">        sed -i $line&#x27;d&#x27; $win_host_path</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">追加ip的映射</span></span><br><span class="line">echo $ip_addr&#x27; &#x27;$host_name &gt;&gt; $win_host_path</span><br><span class="line"></span><br><span class="line">[ -f &quot;$win_host_path&quot; ] &amp;&amp; echo &quot;windows host:&quot;$(nl $win_host_path|grep $host_name) &amp;&amp; echo &#x27;linux ip addr:&#x27;$ip_addr</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
+
+<h2 id="自动执行"><a href="#自动执行" class="headerlink" title="自动执行"></a>自动执行</h2><p>为了能让脚本每次启动的时候自动运行，修改~&#x2F;.bashrc文件，并在最后添加如下代码：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bash /root/shell_scripts/modify_host.sh myubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下面的代码是想每次启动的时候确保mysql服务也启动了</span></span><br><span class="line">service mysql status|grep -w stopped</span><br><span class="line">if [ $? -eq 0 ]</span><br><span class="line">then</span><br><span class="line">        service mysql start</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+
+<p>这样，只需要在windows下使用myubuntu.wsl域名就能连接到linux的服务器</p>
+<p><img src="/2022/06/14/windows-linux-ip/image-20220614165923164.png" alt="image-20220614165923164"></p>
+]]></content>
+      <tags>
+        <tag>技术杂谈</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C#中volatile关键字的作用</title>
     <url>/2022/05/04/volatile/</url>
     <content><![CDATA[<h2 id="volatile使用说明"><a href="#volatile使用说明" class="headerlink" title="volatile使用说明"></a>volatile使用说明</h2><p><code>volatile</code> 关键字指示一个字段可以由多个同时执行的线程修改。</p>
@@ -697,23 +714,6 @@
 <p><img src="/2022/05/04/volatile/volatile_2.png" alt="volatile_2"></p>
 <p>通过差异发现，加了<code>volatile</code>关键字的，直接比较的是地址指向的内容，用的都是最新的值，而没有加关键字的则是：首先通过movzx指令，将地址指向的内容放入到了ecx寄存器中，后面一直比较的也是ecx寄存器中的值，没有拿到最新的值。这样导致的结果就是我们上面程序运行的结果，循环一直不能结束。</p>
 <p>结论：如果存在多线程访问上述类型的字段的话，保险的方式就是通过volatile关键字进行修饰，告诉编译器不需要对该字段进行优化，从而可以每次都能获取到最新的值</p>
-]]></content>
-      <tags>
-        <tag>技术杂谈</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>windows下的linux系统ip自动绑定在hosts文件中</title>
-    <url>/2022/06/14/windows-linux-ip/</url>
-    <content><![CDATA[<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>windows系统的linux，在每一次启动的时候ip总是变动，导致在windows系统中连接linux下的mysql服务总是失败，那是否可以通过启动linux系统的时候就讲ip地址，绑定到windows的hosts文件中呢？这样通过本地的域名就能连接到linux系统的服务了。</p>
-<h2 id="编写脚本"><a href="#编写脚本" class="headerlink" title="编写脚本"></a>编写脚本</h2><p>编写shell脚本：modify_hosts.sh</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">params[1]=$1</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get ip address</span></span><br><span class="line">ip_addr=$(ip addr|grep eth0|grep inet|awk &#x27;&#123;print $2&#125;&#x27;|cut -d / -f 1)</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">ifconfig eth0|sed -n <span class="string">&#x27;2p&#x27;</span>|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> <span class="comment">#该命令获取ip地址更为简洁</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">判断参数是否为空</span></span><br><span class="line">if [ -z $&#123;params[1]&#125; ]</span><br><span class="line">then</span><br><span class="line">        #为空，则获取系统的名称</span><br><span class="line">        sys_name=$(cat /etc/lsb-release|grep ID|cut -d = -f 2)</span><br><span class="line">else</span><br><span class="line">        #不为空，则取第一个参数名</span><br><span class="line">        sys_name=$&#123;params[1]&#125;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">host_name=$sys_name&quot;.wsl&quot;</span><br><span class="line"></span><br><span class="line">win_host_path=/mnt/c/Windows/System32/drivers/etc/HOSTS</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">获取行号</span></span><br><span class="line">line_no=$(nl -b a $win_host_path|grep $host_name|awk &#x27;&#123;print $1&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">for line in $line_no</span><br><span class="line">do</span><br><span class="line">        #删除该行的内容</span><br><span class="line">        sed -i $line&#x27;d&#x27; $win_host_path</span><br><span class="line">done</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">追加ip的映射</span></span><br><span class="line">echo $ip_addr&#x27; &#x27;$host_name &gt;&gt; $win_host_path</span><br><span class="line"></span><br><span class="line">[ -f &quot;$win_host_path&quot; ] &amp;&amp; echo &quot;windows host:&quot;$(nl $win_host_path|grep $host_name) &amp;&amp; echo &#x27;linux ip addr:&#x27;$ip_addr</span><br><span class="line">exit 0</span><br></pre></td></tr></table></figure>
-
-<h2 id="自动执行"><a href="#自动执行" class="headerlink" title="自动执行"></a>自动执行</h2><p>为了能让脚本自动每次启动的时候自动运行，可以修改~&#x2F;.bashrc文件，并在最后添加如下代码：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">bash /root/shell_scripts/modify_host.sh myubuntu</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">下面的代码是想每次启动的时候确保mysql服务也启动了</span></span><br><span class="line">service mysql status|grep -w stopped</span><br><span class="line">if [ $? -eq 0 ]</span><br><span class="line">then</span><br><span class="line">        service mysql start</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
-
-<p>这样，只需要在windows下使用myubuntu.wsl域名就能连接到linux的服务器</p>
-<p><img src="/2022/06/14/windows-linux-ip/image-20220614165923164.png" alt="image-20220614165923164"></p>
 ]]></content>
       <tags>
         <tag>技术杂谈</tag>
