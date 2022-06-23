@@ -20,24 +20,22 @@
     var CONFIG = {"hostname":"likeshan168.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="源码下载访问https:&#x2F;&#x2F;hg.openjdk.java.net&#x2F;jdk&#x2F;jdk12&#x2F;，点击左侧的browser,如果所示：  然后点击zip格式，下载压缩包的文件：  环境准备准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC： 1sudo apt-get install build-essential  还需要安装openjdk编译需要的依赖库FeeType">
+  <meta name="description" content="在wsl系统中执行sytemctl会报如下的错误：System has not been booted with systemd as init system (PID 1). Can‘t operate，这是因为安装systemctl的原因，可以通过如下的步骤进行配置  安装daemonize和fontconfig：sudo apt install -y daemonize fontconfig">
 <meta property="og:type" content="article">
-<meta property="og:title" content="openjdk编译">
-<meta property="og:url" content="https://likeshan168.github.io/2022/05/24/compile-openjdk/index.html">
+<meta property="og:title" content="wsl2中启用systemctl">
+<meta property="og:url" content="https://likeshan168.github.io/2022/06/21/wsl2-systemctl/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="源码下载访问https:&#x2F;&#x2F;hg.openjdk.java.net&#x2F;jdk&#x2F;jdk12&#x2F;，点击左侧的browser,如果所示：  然后点击zip格式，下载压缩包的文件：  环境准备准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC： 1sudo apt-get install build-essential  还需要安装openjdk编译需要的依赖库FeeType">
+<meta property="og:description" content="在wsl系统中执行sytemctl会报如下的错误：System has not been booted with systemd as init system (PID 1). Can‘t operate，这是因为安装systemctl的原因，可以通过如下的步骤进行配置  安装daemonize和fontconfig：sudo apt install -y daemonize fontconfig">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://likeshan168.github.io/2022/05/24/compile-openjdk/image-20220524110301618.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/05/24/compile-openjdk/image-20220524110403637.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/05/24/compile-openjdk/image-20220524181511854.png">
-<meta property="article:published_time" content="2022-05-24T02:39:39.000Z">
-<meta property="article:modified_time" content="2022-05-24T17:05:31.431Z">
+<meta property="og:image" content="https://likeshan168.github.io/2022/06/21/wsl2-systemctl/image-20220621104910471.png">
+<meta property="article:published_time" content="2022-06-21T02:40:07.000Z">
+<meta property="article:modified_time" content="2022-06-21T02:49:21.713Z">
 <meta property="article:author" content="Sherman">
-<meta property="article:tag" content="深入理解Java虚拟机">
+<meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://likeshan168.github.io/2022/05/24/compile-openjdk/image-20220524110301618.png">
+<meta name="twitter:image" content="https://likeshan168.github.io/2022/06/21/wsl2-systemctl/image-20220621104910471.png">
 
-<link rel="canonical" href="https://likeshan168.github.io/2022/05/24/compile-openjdk/">
+<link rel="canonical" href="https://likeshan168.github.io/2022/06/21/wsl2-systemctl/">
 
 
 <script id="page-configurations">
@@ -50,7 +48,7 @@
   };
 </script>
 
-  <title>openjdk编译 | Blog</title>
+  <title>wsl2中启用systemctl | Blog</title>
   
 
 
@@ -184,7 +182,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/05/24/compile-openjdk/">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/06/21/wsl2-systemctl/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -197,7 +195,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          openjdk编译
+          wsl2中启用systemctl
         </h1>
 
         <div class="post-meta">
@@ -206,16 +204,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-24 10:39:39" itemprop="dateCreated datePublished" datetime="2022-05-24T10:39:39+08:00">2022-05-24</time>
+              <time title="创建时间：2022-06-21 10:40:07 / 修改时间：10:49:21" itemprop="dateCreated datePublished" datetime="2022-06-21T10:40:07+08:00">2022-06-21</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-25 01:05:31" itemprop="dateModified" datetime="2022-05-25T01:05:31+08:00">2022-05-25</time>
-              </span>
 
           
   
@@ -226,8 +218,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2022/05/24/compile-openjdk/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/24/compile-openjdk/" itemprop="commentCount"></span>
+    <a title="valine" href="/2022/06/21/wsl2-systemctl/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/21/wsl2-systemctl/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -242,25 +234,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="源码下载"><a href="#源码下载" class="headerlink" title="源码下载"></a>源码下载</h2><p>访问<a target="_blank" rel="noopener" href="https://hg.openjdk.java.net/jdk/jdk12/%EF%BC%8C%E7%82%B9%E5%87%BB%E5%B7%A6%E4%BE%A7%E7%9A%84browser,%E5%A6%82%E6%9E%9C%E6%89%80%E7%A4%BA%EF%BC%9A">https://hg.openjdk.java.net/jdk/jdk12/，点击左侧的browser,如果所示：</a></p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110301618.png" alt="image-20220524110301618"></p>
-<p>然后点击zip格式，下载压缩包的文件：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524110403637.png" alt="image-20220524110403637"></p>
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><p>准备一台linux服务器，例如：Ubuntu 18.04 LTS，安装编译工具GCC：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential</span><br></pre></td></tr></table></figure>
-
-<p>还需要安装openjdk编译需要的依赖库FeeType，CUPS等第三方库：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libfreetype6-dev # FreeType</span><br><span class="line">sudo apt-get install libcups2-dev # CUPS</span><br><span class="line">sudo apt-get install libx11-dev libxext-dev libxrender-dev libxrandr-dev libxtst-dev libxt-dev # X11</span><br><span class="line">sudo apt-get install libasound2-dev # ALSA</span><br><span class="line">sudo apt-get install autoconf # Autoconf</span><br></pre></td></tr></table></figure>
-
-<p>我们还需要一个地本版的openjdk，例如，需要编译的openjdk为12，那么需要准备一个11的openjdk，因为openjdk有多个部分组成（HotSpot，JDK类库，JAXWS,JAXP…），其中HotSpot部分代码是由C、C++编写，而更多的是用java编写的，因此要编译这些java代码的话，需要编译期间可用的JDK，官方称这个JDK为“Bootstrap JDK”。编译OpenJDK 12时，Bootstrap JDK必须使用JDK 11及之后的版本。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install openjdk-11-jdk</span><br></pre></td></tr></table></figure>
-
-<p>上述环境都准备完成之后，接下来就可以进行openjdk的编译</p>
-<h2 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h2><p>我们可以通过默认的配置进行编译，也可以通过定制化的方式进行编译，进入源码所在的目录，可以通过命令：bash configure –help 查看有哪些配置项可以指定，例如：bash configure –enable-debug  -with-jvm-variants&#x3D;server（可选值server，client，minimal，core，zero，custom），其中–enable-debug等效于：-with-debug-level&#x3D;fastdebug（可选值为：release，fastdebug，showdebug），configure命令会检查依赖项，参数配置和输出目录结构，如果编译过程中需要的工具链或者依赖项有缺失，将会得到明确的提示信息，如下所示：</p>
-<p><img src="/2022/05/24/compile-openjdk/image-20220524181511854.png" alt="image-20220524181511854"></p>
-<p>可以看到提示已经很清晰了，只需要执行如下命令即可：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libfontconfig1-dev</span><br></pre></td></tr></table></figure>
-
+        <p>在wsl系统中执行sytemctl会报如下的错误：System has not been booted with systemd as init system (PID 1). Can‘t operate，这是因为安装systemctl的原因，可以通过如下的步骤进行配置</p>
+<ul>
+<li><p>安装daemonize和fontconfig：sudo apt install -y daemonize fontconfig</p>
+</li>
+<li><p>编辑&#x2F;etc&#x2F;profile文件，添加如下的脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">SYSTEMD_PID=$(ps -ef | grep &#x27;/lib/systemd/systemd --system-unit=basic.target$&#x27; | grep -v unshare | awk &#x27;&#123;print $2&#125;&#x27;)</span><br><span class="line"></span><br><span class="line">if [ -z &quot;$SYSTEMD_PID&quot; ]; then</span><br><span class="line">   sudo /usr/bin/daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target</span><br><span class="line">   SYSTEMD_PID=$(ps -ef | grep &#x27;/lib/systemd/systemd --system-unit=basic.target$&#x27; | grep -v unshare | awk &#x27;&#123;print $2&#125;&#x27;)</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ -n &quot;$SYSTEMD_PID&quot; ] &amp;&amp; [ &quot;$SYSTEMD_PID&quot; != &quot;1&quot; ]; then</span><br><span class="line">    exec sudo /usr/bin/nsenter -t $SYSTEMD_PID -a su - $LOGNAME</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编辑 &#x2F;etc&#x2F;sudoers，添加如下的脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">%</span><span class="language-bash">sudo ALL=(ALL) NOPASSWD: /usr/sbin/daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target</span></span><br><span class="line"><span class="meta prompt_">%</span><span class="language-bash">sudo ALL=(ALL) NOPASSWD: /usr/bin/nsenter -t [0-9]* -a su - [a-zA-Z0-9]*</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行命令：sudo source &#x2F;etc&#x2F;profile或者重启 wsl2</p>
+</li>
+<li><p>执行systemctl命令</p>
+</li>
+</ul>
+<p><img src="/2022/06/21/wsl2-systemctl/image-20220621104910471.png" alt="image-20220621104910471"></p>
+<p>可以看到执行成功！</p>
 
     </div>
 
@@ -290,7 +280,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="tag"># 深入理解Java虚拟机</a>
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag"># 技术杂谈</a>
           </div>
 
         
@@ -299,13 +289,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/20/java-extension/" rel="prev" title="java中的扩展方法">
-      <i class="fa fa-chevron-left"></i> java中的扩展方法
+    <a href="/2022/06/21/mybatis-demo/" rel="prev" title="mybatis的初体验">
+      <i class="fa fa-chevron-left"></i> mybatis的初体验
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/05/25/springboot-swagger/" rel="next" title="springboot配置swagger以及swagger2/3之间的区别">
-      springboot配置swagger以及swagger2/3之间的区别 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -365,7 +352,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E4%B8%8B%E8%BD%BD"><span class="nav-number">1.</span> <span class="nav-text">源码下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">环境准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">3.</span> <span class="nav-text">编译</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

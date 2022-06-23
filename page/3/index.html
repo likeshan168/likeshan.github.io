@@ -20,36 +20,28 @@
     var CONFIG = {"hostname":"likeshan168.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
-<meta property="og:type" content="article">
-<meta property="og:title" content="C#中IEnumerable与IQueryable的区别">
-<meta property="og:url" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Blog">
+<meta property="og:url" content="https://likeshan168.github.io/page/3/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库 创建项目1dotnet new console -o queryable_enumerable  添加sqlite EF操作的类库的引用： 12dotnet add package Microsof">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/image-20220426131129413.png">
-<meta property="og:image" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/image-20220426132947167.png">
-<meta property="article:published_time" content="2022-04-25T15:32:51.000Z">
-<meta property="article:modified_time" content="2022-04-26T05:49:47.436Z">
 <meta property="article:author" content="Sherman">
-<meta property="article:tag" content="技术杂谈">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://likeshan168.github.io/2022/04/25/querable-enumerable/image-20220426131129413.png">
 
-<link rel="canonical" href="https://likeshan168.github.io/2022/04/25/querable-enumerable/">
+<link rel="canonical" href="https://likeshan168.github.io/page/3/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : false,
-    isPost : true,
+    isHome : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>C#中IEnumerable与IQueryable的区别 | Blog</title>
+  <title>Blog</title>
   
 
 
@@ -176,10 +168,9 @@
         <div class="content-wrap">
           
 
-          <div class="content post posts-expand">
+          <div class="content index posts-expand">
             
-
-    
+      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -195,9 +186,10 @@
       <meta itemprop="name" content="Blog">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          C#中IEnumerable与IQueryable的区别
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/25/querable-enumerable/" class="post-title-link" itemprop="url">C#中IEnumerable与IQueryable的区别</a>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -241,7 +233,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
+          <p>IEnumerable与IQueryable 都能实现延迟加载的目的，但是两者之间还是有一些区别的，下面我们通过实际的代码来进行验证，创建一个控制台项目，数据库使用sqlite，EFCore操作数据库</p>
 <h2 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h2><figure class="highlight c#"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dotnet <span class="keyword">new</span> console -o queryable_enumerable</span><br></pre></td></tr></table></figure>
 
 <p>添加sqlite EF操作的类库的引用：</p>
@@ -269,63 +261,276 @@
 <p><img src="/2022/04/25/querable-enumerable/image-20220426132947167.png" alt="image-20220426132947167"></p>
 <p>从打印出的sql语句，我们可以知道，通过IEnumerable返回的数据，是一次性将所有的数据装入内存当中，然后进行过滤的操作，但是IQueryable是在数据库层就做了过滤，所以性能方面是有提升的。</p>
 
+      
     </div>
 
     
     
     
-        <div class="reward-container">
-  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
-  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
-    打赏
-  </button>
-  <div id="qr" style="display: none;">
-      
-      <div style="display: inline-block;">
-        <img src="/images/wechat.jpg" alt="Sherman 微信支付">
-        <p>微信支付</p>
-      </div>
-      
-      <div style="display: inline-block;">
-        <img src="/images/alipay.jpg" alt="Sherman 支付宝">
-        <p>支付宝</p>
-      </div>
-
-  </div>
-</div>
-
-
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%8A%80%E6%9C%AF%E6%9D%82%E8%B0%88/" rel="tag"># 技术杂谈</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2022/04/25/hexo-image/" rel="prev" title="hexo+typora+github图片路径问题">
-      <i class="fa fa-chevron-left"></i> hexo+typora+github图片路径问题
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/05/04/volatile/" rel="next" title="C#中volatile关键字的作用">
-      C#中volatile关键字的作用 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
+        <div class="post-eof"></div>
       </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/25/hexo-image/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/25/hexo-image/" class="post-title-link" itemprop="url">hexo+typora+github图片路径问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-25 10:00:42" itemprop="dateCreated datePublished" datetime="2022-04-25T10:00:42+08:00">2022-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-26 11:16:02" itemprop="dateModified" datetime="2022-04-26T11:16:02+08:00">2022-04-26</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
     
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/25/hexo-image/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/25/hexo-image/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>问题现象，通过hexo创建完项目之后，通过typora编辑md文件，插入图片，本地开发是能显示图片的，但是发布到github上就显现不了，主要的原因肯定是路径的问题，<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/asset-folders">hexo</a>官网也给了解决的办法</p>
+<h2 id="资源文件夹"><a href="#资源文件夹" class="headerlink" title="资源文件夹"></a>资源文件夹</h2><p>直接引用官网的解释：</p>
+<p>资源（Asset）代表 <code>source</code> 文件夹中除了文章以外的所有文件，例如图片、CSS、JS 文件等。比方说，如果你的Hexo项目中只有少量图片，那最简单的方法就是将它们放在 <code>source/images</code> 文件夹中。然后通过类似于 <code>![](/images/image.jpg)</code> 的方法访问它们。</p>
+<p>对于那些想要更有规律地提供图片和其他资源以及想要将他们的资源分布在各个文章上的人来说，Hexo也提供了更组织化的方式来管理资源。这个稍微有些复杂但是管理资源非常方便的功能可以通过将 <code>config.yml</code> 文件中的 <code>post_asset_folder</code> 选项设为 <code>true</code> 来打开。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br></pre></td></tr></table></figure>
+
+<p>当资源文件管理功能打开后，Hexo将会在你每一次通过 <code>hexo new [layout] &lt;title&gt;</code> 命令创建新文章时自动创建一个文件夹。这个资源文件夹将会有与这个文章文件一样的名字。将所有与你的文章有关的资源放在这个关联文件夹中之后，你可以通过相对路径来引用它们，这样你就得到了一个更简单而且方便得多的工作流</p>
+<h2 id="相对路径引用的标签插件"><a href="#相对路径引用的标签插件" class="headerlink" title="相对路径引用的标签插件"></a>相对路径引用的标签插件</h2><p>通过常规的 markdown 语法和相对路径来引用图片和其它资源可能会导致它们在存档页或者主页上显示不正确。在Hexo 2时代，社区创建了很多插件来解决这个问题。但是，随着Hexo 3 的发布，许多新的<a target="_blank" rel="noopener" href="https://hexo.io/docs/tag-plugins#Include-Assets">标签插件</a>被加入到了核心代码中。这使得你可以更简单地在文章中引用你的资源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_path slug %&#125;</span><br><span class="line">&#123;% asset_img slug [title] %&#125;</span><br><span class="line">&#123;% asset_link slug [title] %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如说：当你打开文章资源文件夹功能后，你把一个 <code>example.jpg</code> 图片放在了你的资源文件夹中，如果通过使用相对路径的常规 markdown 语法 <code>![](example.jpg)</code> ，它将 <em>不会</em> 出现在首页上。（但是它会在文章中按你期待的方式工作）</p>
+<p>正确的引用图片方式是使用下列的标签插件而不是 markdown ：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img example.jpg This is an example image %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式，图片将会同时出现在文章和主页以及归档页中。</p>
+<p>这种方式，在本地开发中不是太友好</p>
+<h2 id="在markdown文件中嵌入图片"><a href="#在markdown文件中嵌入图片" class="headerlink" title="在markdown文件中嵌入图片"></a>在markdown文件中嵌入图片</h2><p>首先引用 <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-renderer-marked">hexo-renderer-marked</a> 包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-renderer-marked --save</span><br></pre></td></tr></table></figure>
+
+<p>然后修改_config.yml文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">post_asset_folder: true</span><br><span class="line">marked:</span><br><span class="line">  prependRoot: true</span><br><span class="line">  postAsset: true</span><br></pre></td></tr></table></figure>
+
+<p>开启了之后，图片资源就会自动解析成对应的图片路径。比如：“test.jpg” 位于 “&#x2F;2022&#x2F;04&#x2F;25&#x2F;test&#x2F;test.jpg”,</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![](test.jpg)` 将会转换成 `&lt;img src=&quot;/2022/04/25/test/test.jpg&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式，虽然能解决发布之后图片展示的问题，但是不能解决本地typora编辑的问题，例如：有如下的目录结构：</p>
+<p><img src="/../images/image-20220425100849334.png" alt="image-20220425100849334"></p>
+<p>编辑hexo-github.md文件，如果写成：<img src="/2022/04/25/hexo-image/image-20220425100939907.png" alt="image-20220425100939907"></p>
+<p>这种相对路径之后，能在typora中显示图片，但是在网页上就不能展示图片，如果改成下面这种：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101023160.png" alt="image-20220425101023160"></p>
+<p>能在网页上显示图片，但是在typora中又不能显示，这个时候，我们就通过修改插件 hexo-renderer-marked 的代码，来兼容两方的需求，找到图片路径转换的代码：</p>
+<p><img src="/2022/04/25/hexo-image/image-20220425101222552.png" alt="image-20220425101222552"></p>
+<p>其中红框中的代码就是新加的，这样我们在md文件中，路径写成：hexo-github&#x2F;image-20220423232811690.png 这样，就能同时在typora和网页上进行展示，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>查看没有问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>最后发布到GitHub上，完美解决图片路径的问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://likeshan168.github.io/2022/04/23/hexo-github/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Sherman">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/23/hexo-github/" class="post-title-link" itemprop="url">如何通过hexo+github pages搭建博客系统</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-23 23:00:28" itemprop="dateCreated datePublished" datetime="2022-04-23T23:00:28+08:00">2022-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-25 09:49:08" itemprop="dateModified" datetime="2022-04-25T09:49:08+08:00">2022-04-25</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/04/23/hexo-github/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/04/23/hexo-github/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="Hexo环境搭建"><a href="#Hexo环境搭建" class="headerlink" title="Hexo环境搭建"></a>Hexo环境搭建</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://nodejs.org/">Node.js</a> (Node.js 版本需不低于 10.13，建议使用 Node.js 12.0 及以上版本)</li>
+<li><a target="_blank" rel="noopener" href="http://git-scm.com/">Git</a></li>
+<li>安装hexo: npm install -g hexo-cli</li>
+</ul>
+<p>完成上述操作之后，我们就可以通过hexo 命令创建项目</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hexo init hexo_blog</span><br><span class="line">cd hexo_blog</span><br><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>创建完成之后，可以看到我们的目录结构如下：</p>
+<p><img src="/2022/04/23/hexo-github/image-20220423232811690.png" alt="image-20220423232811690"></p>
+<p>其中_config.yml是网站的配置文件，关于各个文件夹是用来做什么的，可以参考<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/setup">hexo</a>官方文档，其中有比较详细的介绍。接下，我们通过如下的命令运行该项目：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g //生成静态文件</span><br><span class="line">hexo s //启动服务</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/04/23/hexo-github/image-20220423233207440.png" alt="image-20220423233207440"></p>
+<p>服务已经成功启动，由于，默认的4000端口已经被占用，我就通过  hexo s -p 5000 指定了端口，然后在浏览器中输入：<a target="_blank" rel="noopener" href="http://localhost:5000/">http://localhost:5000</a> 可以看到运行的结果。</p>
+<h2 id="github-pages"><a href="#github-pages" class="headerlink" title="github pages"></a>github pages</h2><p>首先得要有GitHub的账号，然后创建一个项目</p>
+<p><img src="/2022/04/23/hexo-github/image-20220423233657056.png" alt="image-20220423233657056"></p>
+<p>创建完成之后，我们就可以通过<a target="_blank" rel="noopener" href="https://likeshan168.com.cn进行访问,现在由于没有内容,所以会提示404,接下来我们就将hexo_blog发布到github上/">https://likeshan168.com.cn进行访问，现在由于没有内容，所以会提示404，接下来我们就将hexo_blog发布到GitHub上</a></p>
+<h2 id="发布到GitHub"><a href="#发布到GitHub" class="headerlink" title="发布到GitHub"></a>发布到GitHub</h2><ul>
+<li><p>安装<a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo-deployer-git">hexo-deployer-git</a>：npm install hexo-deployer-git –save</p>
+</li>
+<li><p>修改_config.yml文件的deploy配置：</p>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">&#x27;git&#x27;</span></span><br><span class="line">  <span class="attr">repository:</span> <span class="string">https://github.com/likeshan168/likeshan168.com.cn.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>运行hexo clean &amp;&amp; hexo d</p>
+</li>
+<li><p>设置一下likeshan168.com.cn项目Pages中的开发分支（这里指定的分支名称就是_config.yml中deploy指定的分支名称）</p>
+<p><img src="/2022/04/23/hexo-github/image-20220423234906951.png" alt="image-20220423234906951"></p>
+</li>
+<li><p>访问<a target="_blank" rel="noopener" href="https://likeshan168.com.cn,看是否部署成功/">https://likeshan168.com.cn，看是否部署成功</a></p>
+</li>
+</ul>
+<p>如果在本地访问没有问题，部署到github pages查看样式都不对的话，修改_config.yml文件中的url&#x3D;<a target="_blank" rel="noopener" href="https://likeshan168.com.cn/(%E6%94%B9%E6%88%90%E4%BD%A0%E8%87%AA%E5%B7%B1%E9%A1%B9%E7%9B%AE%E7%9A%84%E5%9C%B0%E5%9D%80)">https://likeshan168.com.cn/(改成你自己项目的地址)</a></p>
+<h2 id="创建新页面"><a href="#创建新页面" class="headerlink" title="创建新页面"></a>创建新页面</h2><p>创建一个about me的页面：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo new page --path about/me &quot;About me&quot;</span><br></pre></td></tr></table></figure>
+
+<p>执行完命令之后就能看到在source目录下创建了about目录，about目录下多了me.md文件：<br><img src="/2022/04/23/hexo-github/image-20220423235637325.png" alt="image-20220423235637325"></p>
+<p>添加菜单：</p>
+<p><img src="/2022/04/23/hexo-github/image-20220423235848764.png" alt="image-20220423235848764"></p>
+<p>重新生成一下静态文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>可以看到About的菜单生成了</p>
+<p><img src="/2022/04/23/hexo-github/image-20220423235939551.png" alt="image-20220423235939551"></p>
+<p>最后，将我们的修改推送到GitHub上即可</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>刷新<a target="_blank" rel="noopener" href="https://likeshan168.com.cn就可以看到我们的更新,至此,通过hexo+github/">https://likeshan168.com.cn就可以看到我们的更新，至此，通过hexo+github</a> pages进行博客系统的搭建基本已经讲完，关于hexo比较详细的操作流程，还需参考官网，谢谢。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
   </article>
   
   
   
 
 
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
+
+
 
           </div>
           
-    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -372,7 +577,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.</span> <span class="nav-text">创建项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%95%B0%E6%8D%AE%E6%93%8D%E4%BD%9C%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">添加数据操作类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8CEF%E5%91%BD%E4%BB%A4%EF%BC%8C%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.</span> <span class="nav-text">执行EF命令，更新数据库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E3%80%81%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-number">4.</span> <span class="nav-text">添加、获取数据</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
